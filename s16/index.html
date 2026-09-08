@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>나의 게임 프로토타입</title>
+<style>
+  * { box-sizing: border-box; }
+  :root {
+    --blue: #314fa3;
+    --sky: #b9dff1;
+    --cream: #fffaf0;
+    --pink: #f29aaa;
+    --green: #76b99b;
+    --orange: #f29a4a;
+    --ink: #303b72;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #dfe9ed;
+    font-family: "Trebuchet MS", "Arial", sans-serif;
+    color: var(--ink);
+  }
+
+  /* 모바일 게임 화면 */
+  .game {
+    position: relative;
+    width: min(100vw, 430px);
+    height: min(100vh, 850px);
+    min-height: 650px;
+    overflow: hidden;
+    background: var(--cream);
+    border: 4px solid var(--blue);
+    border-radius: 26px;
+    box-shadow: 0 12px 35px rgba(40, 60, 100, .18);
+  }
+
+  .screen {
+    position: absolute;
+    inset: 0;
+    padding: 24px;
+    display: none;
+    flex-direction: column;
+    animation: fade .22s ease;
+  }
+  .screen.active { display: flex; }
+
+  @keyframes fade {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* 공통 */
+  button {
+    border: 3px solid var(--blue);
+    background: white;
+    color: var(--ink);
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+    transition: .15s;
+  }
+  button:hover { transform: translateY(-2px); }
+  button:active { transform: translateY(1px) scale(.98); }
+
+  .back {
+    align-self: flex-start;
+    padding: 8px 14px;
+    border-radius: 16px;
+    font-size: 14px;
+  }
+
+  /* ① 타이틀 화면 */
+  #title {
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    background:
+      radial-gradient(circle at 15% 12%, #ffd9df 0 5%, transparent 6%),
+      radial-gradient(circle at 88% 22%, #cce9f4 0 6%, transparent 7%),
+      var(--cream);
+  }
+
+  .title-top {
+    margin-top: 40px;
+  }
+
+  .small-logo {
+    font-size: 14px;
+    letter-spacing: 3px;
+    color: var(--pink);
+    font-weight: 900;
+  }
+
+  h1 {
+    margin: 8px 0;
+    font-size: 42px;
+    line-height: 1.05;
+    color: var(--blue);
+    text-shadow: 3px 3px 0 #f5d7a9;
+  }
+
+  .subtitle {
+    font-size: 15px;
+    opacity: .75;
+  }
+
+  .title-character {
+    width: 190px;
+    height: 210px;
+    margin: 10px auto;
+    position: relative;
+  }
+
+  .blob {
+    position: absolute;
+    width: 145px;
+    height: 135px;
+    left: 22px;
+    top: 35px;
+    border: 4px solid var(--orange);
+    border-radius: 48% 52% 45% 55%;
+    background: #fffdf5;
+  }
+
+  .eye {
+    position: absolute;
+    width: 31px;
+    height: 31px;
+    border: 4px solid var(--orange);
+    border-radius: 50%;
+    top: 62px;
+    background: #fff;
+  }
+  .eye.left { left: 45px; }
+  .eye.right { right: 45px; }
+
+  .eye::after {
+    content: "";
+    position: absolute;
+    width: 9px;
+    height: 9px;
+    background: var(--orange);
+    border-radius: 50%;
+    left: 7px;
+    top: 8px;
+  }
+
+  .mouth {
+    position: absolute;
+    width: 18px;
+    height: 10px;
+    border-bottom: 4px solid var(--orange);
+    border-radius: 50%;
+    top: 105px;
+    left: 64px;
+  }
+
+  .start {
+    width: 220px;
+    padding: 16px;
+    border-radius: 22px;
+    background: #ffd4dc;
+    font-size: 20px;
+  }
+
+  .version {
+    font-size: 11px;
+    opacity: .5;
+    margin-bottom: 10px;
+  }
+
+  /* ③ 메인 화면 */
+  #main {
+    background: #f9fbf1;
+  }
+
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .player {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .avatar {
+    width: 48px;
+    height: 48px;
+    border: 3px solid var(--blue);
+    border-radius: 50%;
+    background: #d8ecf6;
+    display: grid;
+    place-items: center;
+    font-size: 25px;
+  }
+
+  .currency {
+    padding: 8px 12px;
+    border: 3px solid var(--blue);
+    border-radius: 16px;
+    background: #fff;
+    font-weight: 900;
+  }
+
+  .main-art {
+    height: 265px;
+    border: 4px solid var(--blue);
+    border-radius: 28px;
+    background: #dff1f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .main-art::before,
+  .main-art::after {
+    content: "";
+    position: absolute;
+    border: 3px solid #9bcbd7;
+    border-radius: 50%;
+  }
+  .main-art::before { width: 170px; height: 80px; bottom: -35px; left: -30px; }
+  .main-art::after { width: 220px; height: 100px; bottom: -55px; right: -50px; }
+
+  .main-character {
+    font-size: 110px;
+    filter: drop-shadow(0 7px 0 rgba(49,79,163,.15));
+    z-index: 1;
+  }
+
+  .speech {
+    position: absolute;
+    top: 18px;
+    right: 16px;
+    padding: 10px 13px;
+    border: 3px solid var(--blue);
+    border-radius: 18px;
+    background: #fff;
+    font-size: 13px;
+    z-index: 2;
+  }
+
+  .menu-grid {
+    flex: 1;
+    margin-top: 16px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    align-content: center;
+  }
+
+  .menu-btn {
+    min-height: 78px;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: 12px;
+  }
+
+  .menu-btn .icon { font-size: 27px; }
+  .menu-btn.content {
+    background: #ffd8df;
+    border-color: #d65f7b;
+  }
+
+  .bottom-nav {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .bottom-nav button {
+    flex: 1;
+    padding: 10px;
+    border-radius: 16px;
+    font-size: 12px;
+  }
+
+  /* ② 콘텐츠 화면 */
+  #content {
+    background: #fffdf5;
+  }
+
+  .content-title {
+    text-align: center;
+    margin: 15px 0 5px;
+    font-size: 30px;
+    color: var(--blue);
+  }
+
+  .content-desc {
+    text-align: center;
+    margin: 0 0 18px;
+    font-size: 13px;
+    opacity: .65;
+  }
+
+  .cards {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex: 1;
+    justify-content: center;
+  }
+
+  .content-card {
+    position: relative;
+    min-height: 190px;
+    border: 4px solid var(--blue);
+    border-radius: 25px;
+    padding: 18px;
+    overflow: hidden;
+    text-align: left;
+  }
+
+  .content-card:nth-child(1) { background: #ffe1e7; }
+  .content-card:nth-child(2) { background: #dceef5; }
+
+  .card-number {
+    font-size: 12px;
+    font-weight: 900;
+    opacity: .6;
+  }
+
+  .card-title {
+    margin: 7px 0 4px;
+    font-size: 25px;
+  }
+
+  .card-desc {
+    max-width: 58%;
+    font-size: 12px;
+    line-height: 1.5;
+    opacity: .75;
+  }
+
+  .card-visual {
+    position: absolute;
+    right: 15px;
+    bottom: 5px;
+    font-size: 85px;
+  }
+
+  .play {
+    position: absolute;
+    left: 18px;
+    bottom: 15px;
+    padding: 8px 15px;
+    border-radius: 15px;
+    background: #fff;
+    font-size: 12px;
+  }
+
+  .locked {
+    opacity: .55;
+  }
+
+  .locked .play::before {
+    content: "🔒 ";
+  }
+
+  .footer-note {
+    text-align: center;
+    font-size: 11px;
+    opacity: .5;
+    padding-top: 8px;
+  }
+
+  @media (max-height: 720px) {
+    .game { min-height: 100vh; border-radius: 0; }
+    .main-art { height: 210px; }
+    .title-character { transform: scale(.82); margin: -5px auto; }
+  }
+
+  .menu-btn.character {
+    background: #e5d9f7;
+    border-color: #7956a8;
+  }
+
+  .menu-btn.gacha {
+    background: #ffe2ad;
+    border-color: #d58a32;
+  }
+
+  .gacha-machine {
+    margin-top: 10px;
+    min-height: 250px;
+    border: 4px solid var(--blue);
+    border-radius: 28px;
+    background: #eef7f8;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .gacha-orb {
+    width: 125px;
+    height: 125px;
+    border: 5px solid var(--blue);
+    border-radius: 50%;
+    background: #fff;
+    display: grid;
+    place-items: center;
+    font-size: 68px;
+    box-shadow: 0 7px 0 rgba(49,79,163,.12);
+  }
+
+  .gacha-orb.spin {
+    animation: gachaSpin .6s ease;
+  }
+
+  @keyframes gachaSpin {
+    0% { transform: rotate(0) scale(1); }
+    50% { transform: rotate(180deg) scale(1.12); }
+    100% { transform: rotate(360deg) scale(1); }
+  }
+
+  .gacha-result {
+    padding: 8px 14px;
+    border-radius: 14px;
+    background: #fff;
+    border: 2px dashed #9aadd0;
+    font-size: 13px;
+    text-align: center;
+  }
+
+  .draw-btn, .save-btn {
+    width: 100%;
+    margin-top: 12px;
+    padding: 14px;
+    border-radius: 19px;
+    font-size: 17px;
+    background: #ffd7a0;
+  }
+
+  .item-inventory, .wardrobe {
+    margin-top: 12px;
+    padding: 12px;
+    border: 3px solid var(--blue);
+    border-radius: 18px;
+    background: #fff;
+  }
+
+  .inventory-list, .wardrobe-list {
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+    margin-top: 9px;
+    min-height: 34px;
+  }
+
+  .item-chip {
+    padding: 7px 9px;
+    border: 2px solid var(--blue);
+    border-radius: 12px;
+    background: #f7f5ff;
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  .item-chip.equipped-item {
+    background: #ffe0e8;
+    border-color: #d65f7b;
+  }
+
+  .empty-items {
+    font-size: 12px;
+    opacity: .55;
+  }
+
+  .dress-layout {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .dress-preview {
+    min-height: 260px;
+    border: 4px solid var(--blue);
+    border-radius: 27px;
+    background: #e0f1f5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .dress-character {
+    font-size: 120px;
+    filter: drop-shadow(0 7px 0 rgba(49,79,163,.13));
+  }
+
+  .equipped {
+    margin-top: 8px;
+    padding: 7px 12px;
+    border-radius: 13px;
+    background: white;
+    border: 2px solid var(--blue);
+    font-size: 12px;
+  }
+
+  .wardrobe {
+    max-height: 135px;
+    overflow-y: auto;
+  }
+
+  .save-btn {
+    background: #d8efdf;
+    border-color: #4d946f;
+  }
+
+</style>
+</head>
+
+<body>
+<div class="game">
+
+  <!-- ① 타이틀 화면 -->
+  <section id="title" class="screen active">
+    <div class="title-top">
+      <div class="small-logo">A LITTLE ADVENTURE</div>
+      <h1>게임 타이틀</h1>
+      <div class="subtitle">당신의 작은 이야기가 시작됩니다</div>
+    </div>
+
+    <div class="title-character" aria-label="캐릭터">
+      <div class="blob"></div>
+      <div class="eye left"></div>
+      <div class="eye right"></div>
+      <div class="mouth"></div>
+    </div>
+
+    <button class="start" onclick="showScreen('main')">▶ 게임 시작</button>
+    <div class="version">Prototype v0.1</div>
+  </section>
+
+  <!-- ③ 메인 화면 -->
+  <section id="main" class="screen">
+    <div class="topbar">
+      <div class="player">
+        <div class="avatar">🐾</div>
+        <div>
+          <strong>플레이어</strong><br>
+          <small>오늘도 좋은 하루!</small>
+        </div>
+      </div>
+      <div class="currency">★ 120</div>
+    </div>
+
+    <div class="main-art">
+      <div class="speech">오늘은 무엇을 해볼까?</div>
+      <div class="main-character">🐻</div>
+    </div>
+
+    <div class="menu-grid">
+      <button class="menu-btn character" onclick="showScreen('dress')">
+        <span class="icon">👗</span>
+        <span>캐릭터 꾸미기</span>
+      </button>
+
+      <button class="menu-btn gacha" onclick="showScreen('gacha')">
+        <span class="icon">🎁</span>
+        <span>아이템 뽑기</span>
+      </button>
+
+      <button class="menu-btn" onclick="toast('도감 화면은 준비 중이긔!')">
+        <span class="icon">📖</span>
+        <span>도감</span>
+      </button>
+
+      <button class="menu-btn" onclick="toast('상점 화면은 준비 중이긔!')">
+        <span class="icon">🛍️</span>
+        <span>상점</span>
+      </button>
+
+      <button class="menu-btn" onclick="toast('미션 화면은 준비 중이긔!')">
+        <span class="icon">🎯</span>
+        <span>미션</span>
+      </button>
+
+      <button class="menu-btn" onclick="toast('친구 화면은 준비 중이긔!')">
+        <span class="icon">💌</span>
+        <span>친구</span>
+      </button>
+    </div>
+
+    <div class="bottom-nav">
+      <button onclick="showScreen('main')">⌂ 홈</button>
+      <button onclick="showScreen('dress')">👗 꾸미기</button>
+      <button onclick="showScreen('gacha')">🎁 뽑기</button>
+    </div>
+  </section>
+
+  <!-- 아이템 뽑기 화면 -->
+  <section id="gacha" class="screen">
+    <button class="back" onclick="showScreen('main')">← 돌아가기</button>
+    <h2 class="content-title">아이템 뽑기</h2>
+    <p class="content-desc">캐릭터를 꾸밀 아이템을 뽑아보세요</p>
+
+    <div class="gacha-machine">
+      <div class="gacha-orb" id="gachaOrb">🎁</div>
+      <div class="gacha-result" id="gachaResult">뽑기를 눌러 아이템을 획득하세요!</div>
+    </div>
+
+    <div class="item-inventory">
+      <strong>보유 아이템</strong>
+      <div id="inventory" class="inventory-list"></div>
+    </div>
+
+    <button class="draw-btn" onclick="drawItem()">✨ 아이템 1회 뽑기</button>
+    <div class="footer-note">획득한 아이템은 캐릭터 꾸미기에서 착용할 수 있습니다</div>
+  </section>
+
+  <!-- 캐릭터 꾸미기 화면 -->
+  <section id="dress" class="screen">
+    <button class="back" onclick="showScreen('main')">← 돌아가기</button>
+    <h2 class="content-title">캐릭터 꾸미기</h2>
+    <p class="content-desc">뽑은 아이템을 선택해서 캐릭터에게 착용시켜보세요</p>
+
+    <div class="dress-layout">
+      <div class="dress-preview">
+        <div class="dress-character" id="dressCharacter">🐻</div>
+        <div class="equipped" id="equippedText">착용 아이템 없음</div>
+      </div>
+
+      <div class="wardrobe">
+        <strong>내 아이템</strong>
+        <div id="wardrobe" class="wardrobe-list"></div>
+      </div>
+    </div>
+
+    <button class="save-btn" onclick="toast('캐릭터 꾸미기가 저장되었긔!')">✓ 꾸미기 저장</button>
+    <div class="footer-note">아이템을 선택하면 바로 캐릭터에 적용됩니다</div>
+  </section>
+
+</div>
+
+<script>
+  const itemPool = [
+    { name: "분홍 리본", icon: "🎀" },
+    { name: "왕관", icon: "👑" },
+    { name: "선글라스", icon: "🕶️" },
+    { name: "꽃 머리핀", icon: "🌸" },
+    { name: "파란 모자", icon: "🧢" },
+    { name: "별 장식", icon: "⭐" },
+    { name: "하트 목걸이", icon: "💗" },
+    { name: "토끼 귀", icon: "🐰" }
+  ];
+
+  let ownedItems = [
+    { name: "기본 리본", icon: "🎀" }
+  ];
+  let equippedItem = null;
+
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(screen => {
+      screen.classList.remove('active');
+    });
+    document.getElementById(id).classList.add('active');
+
+    if (id === 'dress') renderWardrobe();
+    if (id === 'gacha') renderInventory();
+  }
+
+  function drawItem() {
+    const orb = document.getElementById('gachaOrb');
+    const result = document.getElementById('gachaResult');
+    const item = itemPool[Math.floor(Math.random() * itemPool.length)];
+
+    orb.classList.remove('spin');
+    void orb.offsetWidth;
+    orb.classList.add('spin');
+
+    result.textContent = "✨ 뽑는 중...";
+
+    setTimeout(() => {
+      ownedItems.push(item);
+      orb.textContent = item.icon;
+      result.innerHTML = `🎉 <strong>${item.icon} ${item.name}</strong> 획득!`;
+      renderInventory();
+      renderWardrobe();
+    }, 600);
+  }
+
+  function equipItem(index) {
+    equippedItem = index;
+    renderWardrobe();
+    renderInventory();
+    toast(`${ownedItems[index].icon} ${ownedItems[index].name}을(를) 착용했긔!`);
+  }
+
+  function renderInventory() {
+    const inventory = document.getElementById('inventory');
+    if (!inventory) return;
+
+    inventory.innerHTML = '';
+
+    ownedItems.forEach((item, index) => {
+      const chip = document.createElement('button');
+      chip.className = 'item-chip' +
+        (equippedItem === index ? ' equipped-item' : '');
+      chip.textContent = `${item.icon} ${item.name}`;
+      chip.onclick = () => equipItem(index);
+      inventory.appendChild(chip);
+    });
+  }
+
+  function renderWardrobe() {
+    const wardrobe = document.getElementById('wardrobe');
+    const character = document.getElementById('dressCharacter');
+    const equippedText = document.getElementById('equippedText');
+    if (!wardrobe) return;
+
+    wardrobe.innerHTML = '';
+
+    ownedItems.forEach((item, index) => {
+      const chip = document.createElement('button');
+      chip.className = 'item-chip' +
+        (equippedItem === index ? ' equipped-item' : '');
+      chip.textContent = `${item.icon} ${item.name}`;
+      chip.onclick = () => equipItem(index);
+      wardrobe.appendChild(chip);
+    });
+
+    if (equippedItem !== null && ownedItems[equippedItem]) {
+      const item = ownedItems[equippedItem];
+      character.textContent = item.icon;
+      equippedText.textContent = `현재 착용: ${item.icon} ${item.name}`;
+    } else {
+      character.textContent = '🐻';
+      equippedText.textContent = '착용 아이템 없음';
+    }
+  }
+
+  function toast(message) {
+    const old = document.querySelector('.toast');
+    if (old) old.remove();
+
+    const t = document.createElement('div');
+    t.className = 'toast';
+    t.textContent = message;
+
+    Object.assign(t.style, {
+      position: 'absolute',
+      left: '50%',
+      bottom: '25px',
+      transform: 'translateX(-50%)',
+      background: '#303b72',
+      color: 'white',
+      padding: '11px 16px',
+      borderRadius: '16px',
+      fontSize: '13px',
+      fontWeight: 'bold',
+      zIndex: '99',
+      whiteSpace: 'nowrap'
+    });
+
+    document.querySelector('.game').appendChild(t);
+    setTimeout(() => t.remove(), 1600);
+  }
+
+  renderInventory();
+</script>
+</body>
+</html>
