@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>손주야 이것 좀 도와줘!</title>
+  <style>
+    /* 기본 레이아웃 및 폰트 설정 */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+    }
+
+    body {
+      background-color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    /* 핸드폰 목업 프레임 */
+    .app-container {
+      width: 380px;
+      height: 780px;
+      background-color: #f7fae8;
+      border: 12px solid #1a1a1a;
+      border-radius: 48px;
+      position: relative !important;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+
+    /* 노치 디자인 */
+    .notch {
+      width: 150px;
+      height: 24px;
+      background-color: #1a1a1a;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      border-bottom-left-radius: 14px;
+      border-bottom-right-radius: 14px;
+      z-index: 1000;
+    }
+
+    /* 메인 컨텐츠 영역 */
+    .content-area {
+      padding: 40px 20px 70px 20px;
+      overflow-y: auto;
+      height: 100%;
+    }
+
+    .header-title {
+      font-size: 22px;
+      font-weight: 800;
+      margin-top: 15px;
+      margin-bottom: 16px;
+      color: #222;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .search-box {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid #ddd;
+      background: #fff;
+      font-size: 14px;
+      margin-bottom: 20px;
+      outline: none;
+    }
+
+    /* 카드 그리드 */
+    .card-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 20px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+      transition: transform 0.1s ease;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .card:active {
+      transform: scale(0.97);
+    }
+
+    .card-blue { background-color: #dcf0ff; }
+    .card-orange { background-color: #ffebd2; }
+
+    .card .icon {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+
+    .card .title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #333;
+    }
+
+    /* AI 챗봇 카드 (기본 숨김) */
+    .chatbot-card {
+      display: none;
+      background: #f0f7f4;
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+
+    .chatbot-title {
+      font-size: 14px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chat-bubble {
+      background: #fff;
+      padding: 12px 14px;
+      border-radius: 14px;
+      font-size: 13px;
+      line-height: 1.4;
+      color: #444;
+      margin-bottom: 12px;
+    }
+
+    .chat-input-wrapper {
+      display: flex;
+      gap: 8px;
+    }
+
+    .chat-input {
+      flex: 1;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      font-size: 12px;
+    }
+
+    .chat-send-btn {
+      background: #4caf50;
+      color: white;
+      border: none;
+      padding: 0 14px;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    /* 하단 바 */
+    .bottom-nav-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 58px;
+      background: #ffffff;
+      border-top: 1px solid #e0e0e0;
+      border-bottom-left-radius: 30px;
+      border-bottom-right-radius: 30px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      color: #666;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+      flex: 1;
+    }
+
+    .nav-item .icon { font-size: 18px; margin-bottom: 2px; }
+    .nav-item.active { color: #ff9800; }
+
+    /* 공통 모달 팝업 스타일 */
+    .custom-modal {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: calc(100% - 58px);
+      background: #fff;
+      z-index: 99999;
+      border-top-left-radius: 30px;
+      border-top-right-radius: 30px;
+      overflow: hidden;
+      animation: slideUp 0.25s ease-out forwards;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .modal-header {
+      height: 44px;
+      background: #ff9800;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .modal-close-btn {
+      background: rgba(0,0,0,0.2);
+      border: none;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    /* 무엇을 배울까요 전용 모달 디자인 */
+    .learn-content {
+      width: 100%;
+      height: calc(100% - 44px);
+      background-color: #FFFDE8;
+      padding: 24px 18px;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .learn-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: #000;
+      line-height: 1.35;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .yt-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 12px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      border: 1px solid #f0f0f0;
+    }
+
+    .yt-card-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #222;
+      margin-bottom: 8px;
+    }
+
+    .yt-thumb-wrapper {
+      position: relative;
+      width: 100%;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .yt-thumb-wrapper img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .yt-play-icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 44px;
+      height: 44px;
+      background: rgba(255, 0, 0, 0.9);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .yt-play-icon::after {
+      content: '';
+      display: block;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 7px 0 7px 12px;
+      border-color: transparent transparent transparent #ffffff;
+      margin-left: 3px;
+    }
+
+    .yt-link-text {
+      color: #3b28cc;
+      font-weight: 700;
+      font-size: 11px;
+      text-decoration: underline;
+      word-break: break-all;
+      display: block;
+    }
+
+    /* 토끼 & 당근 깔끔한 캐릭터 영역 */
+    .bunny-illustration {
+      width: 100%;
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content-default {
+      width: 100%;
+      height: calc(100% - 44px);
+      border: none;
+      overflow-y: auto;
+      padding: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <div class="notch"></div>
+
+    <div class="content-area">
+      <div class="header-title">손주야 이것 좀 도와줘! ✨</div>
+      <input type="text" class="search-box" placeholder="궁금한 내용을 검색하세요">
+
+      <div class="card-grid">
+        <!-- 무엇을 배울까요? -->
+        <div class="card card-blue" id="btnLearn" onclick="openModal('learnModal')">
+          <span class="icon">🧮</span>
+          <span class="title">무엇을 배울까요?</span>
+        </div>
+
+        <!-- 궁금해요! -->
+        <div class="card card-blue" id="btnQuestion" onclick="openModal('questionModal')">
+          <span class="icon">💬</span>
+          <span class="title">궁금해요!</span>
+        </div>
+
+        <!-- 실습하기 -->
+        <div class="card card-orange" onclick="openModal('practiceModal')">
+          <span class="icon">👆</span>
+          <span class="title">실습하기</span>
+        </div>
+
+        <!-- 도움 요청하기 -->
+        <div class="card card-orange" id="btnHelp" onclick="toggleChatbot()">
+          <span class="icon">🚩</span>
+          <span class="title">도움 요청하기</span>
+        </div>
+      </div>
+
+      <!-- AI 챗봇 영역 -->
+      <div class="chatbot-card" id="aiChatbotArea">
+        <div class="chatbot-title">🤖 AI 도우미 챗봇 (24시간)</div>
+        <div class="chat-bubble">
+          안녕하세요! 키오스크나 배달앱 이용 중 궁금한 점을 편하게 물어보세요. 😊
+        </div>
+        <div class="chat-input-wrapper">
+          <input type="text" class="chat-input" placeholder="궁금한 내용을 입력하세요...">
+          <button class="chat-send-btn">전송</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1. 무엇을 배울까요? -->
+    <div id="learnModal" class="custom-modal">
+      <div class="modal-header">
+        <span>🧮 무엇을 배울까요?</span>
+        <button class="modal-close-btn" onclick="closeAllModals()">✕ 닫기</button>
+      </div>
+      <div class="learn-content">
+        <div class="learn-title">
+          키오스크와 배달앱은<br>이렇게 배워요!
+        </div>
+
+        <!-- 유튜브 영상 1 -->
+        <div class="yt-card">
+          <div class="yt-card-title">키오스크 영상 10분으로 배우자~!</div>
+          <a href="https://youtu.be/4mo24Bog_P0?si=iEFzXzw5ksNF70dQ" target="_blank" class="yt-thumb-wrapper">
+            <img src="https://img.youtube.com/vi/4mo24Bog_P0/hqdefault.jpg" alt="키오스크 영상 썸네일">
+            <div class="yt-play-icon"></div>
+          </a>
+          <a href="https://youtu.be/4mo24Bog_P0?si=iEFzXzw5ksNF70dQ" target="_blank" class="yt-link-text">
+            https://youtu.be/4mo24Bog_P0
+          </a>
+        </div>
+
+        <!-- 유튜브 영상 2 -->
+        <div class="yt-card">
+          <div class="yt-card-title">배달앱 영상 10분으로 배우자~!</div>
+          <a href="https://youtu.be/uYiEZDwdPxw?si=UuKLNnF08rEKx8cY" target="_blank" class="yt-thumb-wrapper">
+            <img src="https://img.youtube.com/vi/uYiEZDwdPxw/hqdefault.jpg" alt="배달앱 영상 썸네일">
+            <div class="yt-play-icon"></div>
+          </a>
+          <a href="https://youtu.be/uYiEZDwdPxw?si=UuKLNnF08rEKx8cY" target="_blank" class="yt-link-text">
+            https://youtu.be/uYiEZDwdPxw
+          </a>
+        </div>
+
+        <!-- 원본과 똑같이 매끈한 당근 & 토끼 캐릭터 -->
+        <div class="bunny-illustration">
+          <svg width="240" height="180" viewBox="0 0 240 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- 당근 잎사귀 -->
+            <path d="M 42 62 C 30 40 45 35 52 48 C 55 35 70 42 60 58" stroke="#8AC99D" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- 당근 몸통 -->
+            <path d="M 45 65 C 20 85 45 130 65 110 C 85 90 70 60 45 65 Z" stroke="#FF8E3C" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M 48 82 Q 58 85 55 92" stroke="#FF8E3C" stroke-width="4" stroke-linecap="round"/>
+            <path d="M 54 96 Q 64 99 62 105" stroke="#FF8E3C" stroke-width="4" stroke-linecap="round"/>
+
+            <!-- 토끼 귀 -->
+            <path d="M 135 75 C 120 15 155 15 152 75" stroke="#FF8E3C" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M 160 75 C 160 15 195 20 182 82" stroke="#FF8E3C" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- 토끼 머리/몸통 -->
+            <path d="M 115 125 C 105 85 195 85 185 125 C 180 160 120 160 115 125 Z" stroke="#FF8E3C" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- 토끼 눈/입/모자 -->
+            <circle cx="138" cy="118" r="3" fill="#FF8E3C"/>
+            <circle cx="168" cy="118" r="3" fill="#FF8E3C"/>
+            <!-- 꼬마 모자 -->
+            <path d="M 153 72 C 158 62 166 62 170 70" stroke="#FF8E3C" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+            <circle cx="161" cy="62" r="3.5" stroke="#FF8E3C" stroke-width="3.5"/>
+          </svg>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 2. 궁금해요! -->
+    <div id="questionModal" class="custom-modal">
+      <div class="modal-header">
+        <span>💬 궁금해요!</span>
+        <button class="modal-close-btn" onclick="closeAllModals()">✕ 닫기</button>
+      </div>
+      <div class="modal-content-default">
+        <div style="background: #f9f9f9; padding: 14px; border-radius: 12px; margin-bottom: 10px;">
+          <h4 style="font-size: 14px; color: #ff9800; margin-bottom: 6px;">Q. 키오스크 결제는 어떻게 하나요?</h4>
+          <p style="font-size: 13px; color: #444;">메뉴를 선택하신 후 '결제하기' 버튼을 누르고 신용카드를 IC 칩 방향으로 꽂아주시면 됩니다.</p>
+        </div>
+        <div style="background: #f9f9f9; padding: 14px; border-radius: 12px;">
+          <h4 style="font-size: 14px; color: #ff9800; margin-bottom: 6px;">Q. 잘못 주문했을 땐 어쩌죠?</h4>
+          <p style="font-size: 13px; color: #444;">장바구니 화면에서 '취소'나 삭제(X) 버튼을 누르면 초기화됩니다.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. 실습하기 모달 -->
+    <div id="practiceModal" class="custom-modal">
+      <div class="modal-header">
+        <span>👆 실습하기</span>
+        <button class="modal-close-btn" onclick="closeAllModals()">✕ 닫기</button>
+      </div>
+      <iframe style="width:100%; height:calc(100% - 44px); border:none;" src="https://kiosapp.kr/"></iframe>
+    </div>
+
+    <!-- 하단 네비게이션 바 -->
+    <div class="bottom-nav-bar">
+      <div class="nav-item active" onclick="closeAllModals()">
+        <span class="icon">🏠</span>
+        <span>홈</span>
+      </div>
+      <div class="nav-item" onclick="openModal('learnModal')">
+        <span class="icon">🧮</span>
+        <span>무엇을 배울까요</span>
+      </div>
+      <div class="nav-item" onclick="openModal('practiceModal')">
+        <span class="icon">👆</span>
+        <span>실습하기</span>
+      </div>
+      <div class="nav-item" onclick="toggleChatbot()">
+        <span class="icon">🤖</span>
+        <span>AI 챗봇</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 지정한 모달 열기
+    function openModal(modalId) {
+      closeAllModals();
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        modal.style.display = 'block';
+      }
+    }
+
+    // 모든 모달 닫기
+    function closeAllModals() {
+      const modals = document.querySelectorAll('.custom-modal');
+      modals.forEach(modal => {
+        modal.style.display = 'none';
+      });
+    }
+
+    // AI 챗봇 토글
+    function toggleChatbot() {
+      closeAllModals();
+      const chatbot = document.getElementById('aiChatbotArea');
+      if (chatbot.style.display === 'block') {
+        chatbot.style.display = 'none';
+      } else {
+        chatbot.style.display = 'block';
+        chatbot.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  </script>
+
+</body>
+</html>
