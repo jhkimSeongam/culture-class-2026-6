@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>기상천회 역사 미연시 게임</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="game-container">
+    
+    <!-- [화면 1] 메인 타이틀 화면 -->
+    <div id="main-menu">
+      <div id="main-title">기상천회 역사<br>미연시 게임</div>
+      <button class="start-btn" id="start-btn">시작하기</button>
+    </div>
+
+    <!-- 상단 역사 정보 박스 -->
+    <div id="history-info"></div>
+
+    <!-- [화면 2] 인게임 캐릭터 및 대사 영역 -->
+    <div id="character-area">
+      <img id="character" src="hero.png" alt="캐릭터" onerror="this.style.display='none'">
+    </div>
+
+    <!-- 선택지 버튼 영역 -->
+    <div id="choices-box"></div>
+
+    <!-- 대사창 -->
+    <div id="dialog-box">
+      <div id="speaker-name">주인공</div>
+      <div id="dialog-text">이야기를 시작하려면 버튼을 누르세요.</div>
+    </div>
+
+    <!-- [화면 3] 엔딩 화면 (새로 추가) -->
+    <div id="ending-menu" style="display: none;">
+      <div id="ending-title">1장 완결<br>[달빛 아래의 재회]</div>
+      <p id="ending-text">역사적 비밀을 간직한 그와의 이야기는 계속됩니다.</p>
+      <button class="start-btn" id="restart-btn">처음으로 돌아가기</button>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
