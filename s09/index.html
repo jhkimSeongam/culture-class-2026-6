@@ -1,0 +1,153 @@
+<html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>키오스크 배우기 - 리얼 버거킹 시뮬레이션</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="phone-frame">
+        <div class="status-bar">9:41</div>
+
+        <!-- ================= [1번 화면] 세련된 메인 홈 ================= -->
+        <div id="page1" class="page active">
+            <div class="app-header-v2">
+                <div class="header-top">
+                    <span class="header-badge">SMART KIOSK</span>
+                    <span class="header-status-dot">● 연습 모드 ON</span>
+                </div>
+                <h1>키오스크 마스터 🤖</h1>
+                <p>어려웠던 키오스크, 실제 매장처럼 쉽게 배워보세요.</p>
+            </div>
+            
+            <div class="menu-list-v2">
+                <button class="menu-card-v2 highlight" onclick="nextPage('page2')">
+                    <div class="card-icon-wrapper red">🍔</div>
+                    <div class="card-info">
+                        <div class="card-title-row">
+                            <span class="card-title">버거킹 주문하기</span>
+                            <span class="tag-v2">추천</span>
+                        </div>
+                        <div class="card-sub">실전 패스트푸드 결제 과정 연습</div>
+                    </div>
+                    <div class="card-arrow">➔</div>
+                </button>
+
+                <button class="menu-card-v2" onclick="alert('패스트푸드 연습을 먼저 진행해 주세요!')">
+                    <div class="card-icon-wrapper blue">💳</div>
+                    <div class="card-info">
+                        <div class="card-title-row">
+                            <span class="card-title">은행 ATM 송금</span>
+                        </div>
+                        <div class="card-sub">계좌이체 및 출금 단계 연습</div>
+                    </div>
+                    <div class="card-arrow">➔</div>
+                </button>
+
+                <button class="menu-card-v2" onclick="alert('패스트푸드 연습을 먼저 진행해 주세요!')">
+                    <div class="card-icon-wrapper orange">☕</div>
+                    <div class="card-info">
+                        <div class="card-title-row">
+                            <span class="card-title">카페 음료 주문</span>
+                        </div>
+                        <div class="card-sub">옵션 변경 및 퍼스널 오더</div>
+                    </div>
+                    <div class="card-arrow">➔</div>
+                </button>
+            </div>
+
+            <!-- 하단 탭바 -->
+            <div class="bottom-nav">
+                <div class="nav-item active">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-text">홈</span>
+                </div>
+                <div class="nav-item" onclick="alert('업적 메뉴입니다.')">
+                    <span class="nav-icon">🏆</span>
+                    <span class="nav-text">업적</span>
+                </div>
+                <div class="nav-item" onclick="alert('도움말 메뉴입니다.')">
+                    <span class="nav-icon">❓</span>
+                    <span class="nav-text">도움말</span>
+                </div>
+                <div class="nav-item" onclick="alert('내 정보 메뉴입니다.')">
+                    <span class="nav-icon">👤</span>
+                    <span class="nav-text">내 정보</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= [2번 화면] 실제 키오스크 ================= -->
+        <div id="page2" class="page">
+            <div class="kiosk-frame">
+                <!-- 상단 헤더 -->
+                <div class="kiosk-header">
+                    <div class="brand-logo">BURGER KING</div>
+                    <button class="lang-select" onclick="alert('언어 변경 기능입니다.')">한국어 ▼</button>
+                </div>
+
+                <!-- 카테고리 탭 -->
+                <div class="category-bar">
+                    <div class="cat-tab active" onclick="switchCategory('recommended', this)">추천메뉴</div>
+                    <div class="cat-tab" onclick="switchCategory('premium', this)">프리미엄</div>
+                    <div class="cat-tab" onclick="switchCategory('whopper', this)">와퍼&주니어</div>
+                    <div class="cat-tab" onclick="switchCategory('side', this)">사이드</div>
+                </div>
+
+                <!-- 메뉴 그리드 -->
+                <div class="menu-grid" id="menuGrid">
+                    <!-- 자바스크립트로 출력 -->
+                </div>
+
+                <!-- 하단 장바구니 영역 -->
+                <div class="cart-section">
+                    <div class="cart-header">
+                        <span class="cart-badge" id="cartCountBadge">카트 0</span>
+                        <span class="total-label">총 주문금액: <strong class="total-price" id="totalPriceDisplay">0원</strong></span>
+                    </div>
+
+                    <div class="cart-item-list" id="cartItemList">
+                        <div class="empty-msg">메뉴를 선택해 주세요!</div>
+                    </div>
+
+                    <div class="kiosk-action-btns">
+                        <button class="btn-cancel" onclick="clearCart()">전체 취소</button>
+                        <button class="btn-pay" onclick="processPayment()">결제하기</button>
+                    </div>
+
+                    <div class="kiosk-footer-menu">
+                        <button class="footer-btn" onclick="alert('쿠폰 바코드를 스캔해 주세요.')">🎟️ 쿠폰사용하기</button>
+                        <button class="footer-btn" onclick="alert('영양성분표를 확인합니다.')">📋 영양성분</button>
+                    </div>
+                </div>
+
+                <div class="guide-toast">
+                    <span class="toast-icon">📢</span>
+                    <span>메뉴 선택 후 <strong>'결제하기'</strong>를 누르세요!</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= [3번 화면] 성공 및 폭죽 ================= -->
+        <div id="page3" class="page page-center">
+            <div id="fireworks-container"></div>
+
+            <div class="success-card">
+                <div class="success-icon-bounce">🎉</div>
+                <h1 class="success-title">주문 성공!</h1>
+                <div class="order-number-box">
+                    <span class="ord-label">주문번호</span>
+                    <span class="ord-num">0154</span>
+                </div>
+                <p class="success-desc">선택하신 메뉴의 결제가 완료되었습니다!</p>
+                <button class="restart-btn" onclick="nextPage('page1')">처음으로 돌아가기</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
