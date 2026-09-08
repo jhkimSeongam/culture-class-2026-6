@@ -1,0 +1,2448 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>대학 어디? — Sky Journey</title>
+
+<style>
+/* =========================
+   RESET & BASIC
+========================= */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --ink: #29263d;
+  --soft: #6e6a82;
+  --glass: rgba(255,255,255,.82);
+}
+
+body {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 30% 20%, #3c3d69, transparent 40%),
+    linear-gradient(135deg, #101221, #24263f);
+  font-family: Pretendard, "Malgun Gothic", sans-serif;
+}
+
+
+/* =========================
+   PHONE
+========================= */
+
+.phone {
+  position: relative;
+  width: 390px;
+  height: 844px;
+  max-height: 94vh;
+
+  overflow: hidden;
+
+  border-radius: 42px;
+  border: 8px solid #11131e;
+
+  background: #151827;
+
+  box-shadow:
+    0 30px 80px rgba(0,0,0,.55);
+}
+
+.status-bar {
+  position: absolute;
+  z-index: 50;
+  top: 0;
+
+  width: 100%;
+  height: 35px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 0 24px;
+
+  color: rgba(255,255,255,.8);
+  font-size: 11px;
+}
+
+
+/* =========================
+   SKY
+========================= */
+
+.sky {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  transition: 1.1s ease;
+}
+
+
+/* NIGHT */
+
+.sky.night {
+  background:
+    radial-gradient(circle at 70% 20%, rgba(116,95,205,.3), transparent 30%),
+    linear-gradient(to bottom,
+      #050713,
+      #11142d 42%,
+      #293455 100%);
+}
+
+
+/* AURORA */
+
+.sky.aurora {
+  background:
+    radial-gradient(circle at 70% 25%, rgba(76,197,181,.18), transparent 35%),
+    linear-gradient(to bottom,
+      #071322,
+      #102c3b 55%,
+      #24434b);
+}
+
+
+/* DAY */
+
+.sky.day {
+  background:
+    linear-gradient(to bottom,
+      #4f9fd3,
+      #9fd6ee 55%,
+      #d9eef3);
+}
+
+
+/* SUNSET */
+
+.sky.sunset {
+  background:
+    linear-gradient(to bottom,
+      #372b55 0%,
+      #9a5477 30%,
+      #e98279 57%,
+      #ffc285 100%);
+}
+
+
+/* =========================
+   STARS
+========================= */
+
+.stars {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transition: opacity .8s;
+}
+
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+
+  border-radius: 50%;
+  background: white;
+
+  box-shadow: 0 0 6px rgba(255,255,255,.9);
+}
+
+
+/* =========================
+   MILKY WAY
+========================= */
+
+.milky-way {
+  position: absolute;
+
+  width: 140%;
+  height: 180px;
+
+  left: -20%;
+  top: 70px;
+
+  transform: rotate(-18deg);
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(120,130,255,.1),
+      rgba(232,219,255,.55),
+      rgba(130,145,255,.18),
+      transparent
+    );
+
+  filter: blur(18px);
+
+  opacity: .6;
+
+  transition: opacity .8s;
+}
+
+
+/* =========================
+   AURORA
+========================= */
+
+.aurora {
+  position: absolute;
+
+  width: 150%;
+  height: 330px;
+
+  top: 70px;
+  left: -25%;
+
+  opacity: 0;
+
+  filter: blur(25px);
+
+  background:
+    radial-gradient(
+      ellipse at 30% 50%,
+      rgba(76,255,201,.5),
+      transparent 38%
+    ),
+    radial-gradient(
+      ellipse at 60% 40%,
+      rgba(117,129,255,.45),
+      transparent 35%
+    ),
+    radial-gradient(
+      ellipse at 80% 55%,
+      rgba(198,115,255,.4),
+      transparent 32%
+    );
+
+  transition: opacity 1s;
+
+  animation: auroraMove 8s ease-in-out infinite alternate;
+}
+
+@keyframes auroraMove {
+  to {
+    transform:
+      translateX(5%)
+      translateY(10px)
+      rotate(3deg);
+  }
+}
+
+
+/* =========================
+   CLOUDS
+========================= */
+
+.cloud-layer {
+  position: absolute;
+  left: -10%;
+  bottom: -5%;
+
+  width: 120%;
+  height: 50%;
+
+  opacity: .7;
+
+  background:
+    radial-gradient(circle at 10% 70%, white 0 8%, transparent 9%),
+    radial-gradient(circle at 25% 55%, white 0 11%, transparent 12%),
+    radial-gradient(circle at 43% 75%, white 0 13%, transparent 14%),
+    radial-gradient(circle at 62% 50%, white 0 10%, transparent 11%),
+    radial-gradient(circle at 82% 70%, white 0 14%, transparent 15%);
+
+  filter: blur(7px);
+
+  transition: .8s;
+}
+
+
+/* =========================
+   SUNSET CLOUD
+========================= */
+
+.sunset-glow {
+  position: absolute;
+
+  inset: 0;
+
+  opacity: 0;
+
+  background:
+    radial-gradient(
+      ellipse at 60% 75%,
+      rgba(255,218,150,.7),
+      transparent 25%
+    );
+
+  transition: opacity 1s;
+}
+
+
+/* =========================
+   AIRPLANE JOURNEY
+========================= */
+
+.flight {
+  position: absolute;
+  z-index: 15;
+
+  top: 52px;
+  left: 7%;
+
+  width: 86%;
+
+  height: 55px;
+
+  pointer-events: none;
+}
+
+
+/* 비행운 */
+
+.trail {
+  position: absolute;
+
+  left: 0;
+  top: 24px;
+
+  width: 5%;
+  height: 2px;
+
+  border-radius: 20px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255,255,255,.75)
+    );
+
+  transition:
+    width 1s ease;
+}
+
+
+/* 비행기 */
+
+.plane {
+  position: absolute;
+
+  left: 5%;
+  top: 10px;
+
+  font-size: 20px;
+
+  transform:
+    rotate(10deg);
+
+  filter:
+    drop-shadow(0 3px 4px rgba(0,0,0,.18));
+
+  transition:
+    left 1s cubic-bezier(.2,.8,.2,1);
+
+  animation:
+    floatPlane 3s ease-in-out infinite;
+}
+
+@keyframes floatPlane {
+
+  50% {
+    transform:
+      translateY(-3px)
+      rotate(10deg);
+  }
+
+}
+
+
+/* =========================
+   SMALL SKY DETAILS
+========================= */
+
+.moon {
+  position: absolute;
+
+  top: 110px;
+  right: 25px;
+
+  width: 35px;
+  height: 35px;
+
+  border-radius: 50%;
+
+  background: #fff6d9;
+
+  box-shadow:
+    0 0 35px rgba(255,244,200,.5);
+
+  opacity: .85;
+}
+
+.shooting-star {
+  position: absolute;
+
+  top: 160px;
+  left: 50px;
+
+  width: 50px;
+  height: 1px;
+
+  opacity: .5;
+
+  background:
+    linear-gradient(
+      90deg,
+      white,
+      transparent
+    );
+
+  transform:
+    rotate(-25deg);
+
+  animation:
+    shooting 6s infinite;
+}
+
+@keyframes shooting {
+
+  0%, 80% {
+    opacity: 0;
+    transform:
+      translate(0,0)
+      rotate(-25deg);
+  }
+
+  85% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform:
+      translate(120px,80px)
+      rotate(-25deg);
+  }
+
+}
+
+.birds {
+  position: absolute;
+
+  top: 170px;
+  right: 50px;
+
+  opacity: 0;
+
+  font-size: 13px;
+
+  letter-spacing: 7px;
+
+  transition: opacity .8s;
+}
+
+
+/* =========================
+   APP CONTENT
+========================= */
+
+.app {
+  position: relative;
+  z-index: 20;
+
+  height: 100%;
+
+  overflow-y: auto;
+
+  padding:
+    125px 18px 95px;
+
+  scrollbar-width: none;
+}
+
+.app::-webkit-scrollbar {
+  display: none;
+}
+
+.page {
+  display: none;
+}
+
+.page.active {
+  display: block;
+  animation:
+    pageIn .5s ease;
+}
+
+@keyframes pageIn {
+
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+}
+
+
+/* =========================
+   TYPOGRAPHY
+========================= */
+
+.eyebrow {
+  color: rgba(255,255,255,.7);
+
+  font-size: 10px;
+  font-weight: 800;
+
+  letter-spacing: 1px;
+
+  margin-bottom: 8px;
+}
+
+.title {
+  color: white;
+
+  font-size: 30px;
+  font-weight: 900;
+
+  letter-spacing: -2px;
+}
+
+.subtitle {
+  margin-top: 8px;
+  margin-bottom: 20px;
+
+  color: rgba(255,255,255,.78);
+
+  font-size: 12px;
+}
+
+
+/* =========================
+   START
+========================= */
+
+.start {
+  min-height: 600px;
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+}
+
+.start-badge {
+  margin-bottom: 22px;
+
+  padding: 8px 13px;
+
+  border-radius: 20px;
+
+  background:
+    rgba(255,255,255,.1);
+
+  color:
+    rgba(255,255,255,.8);
+
+  font-size: 11px;
+}
+
+.start h1 {
+  color: white;
+
+  font-size: 47px;
+  font-weight: 900;
+
+  letter-spacing: -4px;
+}
+
+.start p {
+  margin-top: 17px;
+
+  color: rgba(255,255,255,.8);
+
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+
+/* =========================
+   BUTTON
+========================= */
+
+.main-button {
+
+  width: 100%;
+
+  margin-top: 35px;
+
+  padding: 18px;
+
+  border: none;
+  border-radius: 22px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ffe9b0,
+      #ffc66d
+    );
+
+  color: #514536;
+
+  font-size: 15px;
+  font-weight: 900;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 12px 25px rgba(0,0,0,.18);
+
+  transition: .2s;
+}
+
+.main-button:hover {
+  transform: translateY(-2px);
+}
+
+.main-button:active {
+  transform: translateY(3px);
+}
+
+
+/* =========================
+   GLASS CARD
+========================= */
+
+.card {
+
+  position: relative;
+
+  margin-bottom: 12px;
+
+  padding: 18px;
+
+  border-radius: 24px;
+
+  background:
+    rgba(255,255,255,.87);
+
+  border:
+    1px solid rgba(255,255,255,.7);
+
+  box-shadow:
+    0 15px 35px rgba(0,0,0,.12);
+
+  backdrop-filter:
+    blur(18px);
+}
+
+.card::after {
+
+  content: "✦";
+
+  position: absolute;
+
+  right: 17px;
+  top: 13px;
+
+  color: #d7cfdd;
+
+  font-size: 10px;
+
+}
+
+.card-title {
+
+  margin-bottom: 15px;
+
+  color: var(--ink);
+
+  font-size: 14px;
+  font-weight: 900;
+}
+
+
+/* =========================
+   CATEGORY
+========================= */
+
+.category {
+
+  border-top:
+    1px solid #ece8ed;
+}
+
+.category:first-of-type {
+  border-top: none;
+}
+
+.category-head {
+
+  width: 100%;
+
+  padding: 13px 0;
+
+  display: flex;
+  justify-content: space-between;
+
+  border: none;
+  background: none;
+
+  color: #555164;
+
+  font-size: 13px;
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.plus {
+
+  width: 22px;
+  height: 22px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 50%;
+
+  background: #f0edf2;
+}
+
+.category.open .plus {
+
+  transform: rotate(45deg);
+
+  background: #6a6577;
+
+  color: white;
+}
+
+.field-list {
+
+  display: none;
+
+  flex-wrap: wrap;
+  gap: 7px;
+
+  padding-bottom: 13px;
+}
+
+.category.open .field-list {
+  display: flex;
+}
+
+.chip {
+
+  padding: 9px 12px;
+
+  border:
+    1px solid #e2dee5;
+
+  border-radius: 18px;
+
+  background: white;
+
+  color: #6a6573;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.chip.selected {
+
+  background: #625d74;
+
+  border-color: #625d74;
+
+  color: white;
+}
+
+
+/* =========================
+   OPTIONS
+========================= */
+
+.option-row {
+
+  display: flex;
+  gap: 7px;
+}
+
+.option {
+
+  flex: 1;
+
+  padding: 13px 6px;
+
+  border:
+    1px solid #e5e1e7;
+
+  border-radius: 15px;
+
+  background: white;
+
+  color: #6a6573;
+
+  font-size: 12px;
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.option.selected {
+
+  background: #625d74;
+
+  border-color: #625d74;
+
+  color: white;
+}
+
+
+/* =========================
+   SELECT
+========================= */
+
+select {
+
+  width: 100%;
+
+  padding: 14px;
+
+  border:
+    1px solid #e5e1e7;
+
+  border-radius: 15px;
+
+  background: white;
+
+  color: #55505f;
+
+  outline: none;
+}
+
+
+/* =========================
+   UNIVERSITY CARD
+========================= */
+
+.uni-card {
+
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  gap: 13px;
+
+  margin-bottom: 11px;
+
+  padding: 15px;
+
+  border-radius: 23px;
+
+  background:
+    rgba(255,255,255,.9);
+
+  box-shadow:
+    0 12px 30px rgba(0,0,0,.12);
+
+  cursor: pointer;
+
+  overflow: hidden;
+}
+
+.uni-card::after {
+
+  content: "";
+
+  position: absolute;
+
+  left: 25px;
+  right: 25px;
+  bottom: 7px;
+
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(124,115,140,.3),
+      transparent
+    );
+
+}
+
+.uni-icon {
+
+  width: 55px;
+  height: 55px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 18px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #d8e6ed,
+      #ddd4e9
+    );
+
+  font-size: 24px;
+}
+
+.uni-main {
+  flex: 1;
+}
+
+.uni-name {
+
+  color: #373344;
+
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.uni-place {
+
+  margin-top: 5px;
+
+  color: #898493;
+
+  font-size: 10px;
+}
+
+.match {
+
+  margin-top: 7px;
+
+  color: #a27941;
+
+  font-size: 10px;
+  font-weight: 900;
+}
+
+
+/* =========================
+   DETAIL
+========================= */
+
+.back {
+
+  margin-bottom: 14px;
+
+  border: none;
+  background: none;
+
+  color: white;
+
+  font-size: 12px;
+
+  cursor: pointer;
+}
+
+.detail {
+
+  padding: 22px;
+
+  border-radius: 28px;
+
+  background:
+    rgba(255,251,248,.91);
+
+  box-shadow:
+    0 20px 45px rgba(0,0,0,.2);
+}
+
+.detail-top {
+
+  display: flex;
+  gap: 15px;
+
+  padding-bottom: 18px;
+
+  border-bottom:
+    1px solid #ece4df;
+}
+
+.big-icon {
+
+  width: 70px;
+  height: 70px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 22px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ead9cb,
+      #e8c0b5
+    );
+
+  font-size: 30px;
+}
+
+.detail h2 {
+
+  color: #3b3540;
+
+  font-size: 21px;
+}
+
+.location {
+
+  margin-top: 8px;
+
+  color: #8b8388;
+
+  font-size: 11px;
+}
+
+.detail-section {
+
+  padding: 16px 0;
+
+  border-bottom:
+    1px solid #ece4df;
+}
+
+.detail-section h4 {
+
+  margin-bottom: 8px;
+
+  color: #5a5058;
+
+  font-size: 13px;
+}
+
+.detail-section p {
+
+  color: #777078;
+
+  font-size: 12px;
+
+  line-height: 1.7;
+}
+
+
+/* =========================
+   DETAIL BUTTONS
+========================= */
+
+.save-button {
+
+  width: 100%;
+
+  margin-top: 12px;
+
+  padding: 14px;
+
+  border-radius: 15px;
+
+  border:
+    1px solid #eadcdf;
+
+  background: white;
+
+  color: #705e66;
+
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.save-button.saved {
+
+  background: #f3d9df;
+
+  color: #a84e60;
+}
+
+.homepage {
+
+  display: block;
+
+  width: 100%;
+
+  margin-top: 9px;
+
+  padding: 14px;
+
+  border-radius: 15px;
+
+  background: #63576d;
+
+  color: white;
+
+  text-align: center;
+
+  font-size: 12px;
+  font-weight: 800;
+
+  text-decoration: none;
+}
+
+
+/* =========================
+   TAB BAR
+========================= */
+
+.tabbar {
+
+  position: absolute;
+
+  z-index: 30;
+
+  bottom: 0;
+
+  width: 100%;
+  height: 75px;
+
+  display: none;
+
+  align-items: center;
+  justify-content: space-around;
+
+  background:
+    rgba(17,22,36,.72);
+
+  backdrop-filter:
+    blur(18px);
+}
+
+.tab {
+
+  border: none;
+  background: none;
+
+  color:
+    rgba(255,255,255,.45);
+
+  font-size: 11px;
+
+  line-height: 1.8;
+
+  cursor: pointer;
+}
+
+.tab.active {
+  color: #ffe3a1;
+}
+
+
+/* =========================
+   EMPTY
+========================= */
+
+.empty {
+
+  padding: 45px 20px;
+
+  border-radius: 24px;
+
+  background:
+    rgba(255,255,255,.88);
+
+  color: #686372;
+
+  text-align: center;
+
+  font-size: 13px;
+
+  line-height: 1.8;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:600px) {
+
+  body {
+    background: #11131e;
+  }
+
+  .phone {
+
+    width: 100vw;
+    height: 100vh;
+
+    max-height: none;
+
+    border: none;
+    border-radius: 0;
+  }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+<div class="phone">
+
+<div class="status-bar">
+  <span>9:41</span>
+  <span>● ● ●</span>
+</div>
+
+
+<!-- SKY -->
+
+<div
+class="sky night"
+id="sky"
+>
+
+  <div
+  class="stars"
+  id="stars"
+  ></div>
+
+  <div
+  class="milky-way"
+  id="milkyWay"
+  ></div>
+
+  <div
+  class="aurora"
+  id="aurora"
+  ></div>
+
+  <div
+  class="sunset-glow"
+  id="sunsetGlow"
+  ></div>
+
+  <div
+  class="moon"
+  id="moon"
+  ></div>
+
+  <div
+  class="shooting-star"
+  id="shootingStar"
+  ></div>
+
+  <div
+  class="birds"
+  id="birds"
+  >
+    〰 〰 〰
+  </div>
+
+  <div
+  class="cloud-layer"
+  id="clouds"
+  ></div>
+
+
+  <!-- Flight -->
+
+  <div
+  class="flight"
+  >
+
+    <div
+    class="trail"
+    id="trail"
+    ></div>
+
+    <div
+    class="plane"
+    id="plane"
+    >
+      ✈
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- APP -->
+
+<main class="app">
+
+
+<!-- START -->
+
+<section
+class="page active"
+id="startPage"
+>
+
+<div class="start">
+
+<div class="start-badge">
+✦ SKY JOURNEY
+</div>
+
+<h1>
+대학 어디?
+</h1>
+
+<p>
+하늘을 여행하며<br>
+나에게 맞는 목적지를 찾아보자.
+</p>
+
+<button
+class="main-button"
+onclick="startApp()"
+>
+🧭 여행 시작하기
+</button>
+
+</div>
+
+</section>
+
+
+<!-- SEARCH -->
+
+<section
+class="page"
+id="searchPage"
+>
+
+<div class="eyebrow">
+YOUR FLIGHT PLAN
+</div>
+
+<h1 class="title">
+어디로 떠날까?
+</h1>
+
+<p class="subtitle">
+먼저 여행의 방향을 정해보자.
+</p>
+
+
+<div class="card">
+
+<div class="card-title">
+✦ 관심 분야
+</div>
+
+
+<div class="category">
+
+<button class="category-head">
+🎨 예술 · 창작
+<span class="plus">+</span>
+</button>
+
+<div class="field-list">
+
+<button class="chip field" data-value="사진">📷 사진</button>
+<button class="chip field" data-value="영상">🎬 영상</button>
+<button class="chip field" data-value="디자인">🎨 디자인</button>
+<button class="chip field" data-value="미술">🖼 미술</button>
+<button class="chip field" data-value="음악">🎵 음악</button>
+
+</div>
+
+</div>
+
+
+<div class="category">
+
+<button class="category-head">
+🔬 과학 · 공학
+<span class="plus">+</span>
+</button>
+
+<div class="field-list">
+
+<button class="chip field" data-value="과학">과학</button>
+<button class="chip field" data-value="공학">공학</button>
+<button class="chip field" data-value="컴퓨터">컴퓨터</button>
+<button class="chip field" data-value="AI">AI</button>
+
+</div>
+
+</div>
+
+
+<div class="category">
+
+<button class="category-head">
+📚 인문 · 사회
+<span class="plus">+</span>
+</button>
+
+<div class="field-list">
+
+<button class="chip field" data-value="문학">문학</button>
+<button class="chip field" data-value="심리">심리</button>
+<button class="chip field" data-value="사회">사회</button>
+<button class="chip field" data-value="외국어">외국어</button>
+
+</div>
+
+</div>
+
+
+<div class="category">
+
+<button class="category-head">
+💼 경영 · 실용
+<span class="plus">+</span>
+</button>
+
+<div class="field-list">
+
+<button class="chip field" data-value="경영">경영</button>
+<button class="chip field" data-value="경제">경제</button>
+<button class="chip field" data-value="미디어">미디어</button>
+<button class="chip field" data-value="관광">관광</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="card-title">
+📝 지원 방식
+</div>
+
+<div class="option-row">
+
+<button
+class="option type"
+data-value="수시"
+>
+수시
+</button>
+
+<button
+class="option type"
+data-value="실기"
+>
+실기
+</button>
+
+<button
+class="option type"
+data-value="정시"
+>
+정시
+</button>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="card-title">
+📍 여행할 지역
+</div>
+
+<select id="region">
+
+<option value="">
+지역 선택
+</option>
+
+<option value="서울">
+서울
+</option>
+
+<option value="경기">
+경기
+</option>
+
+<option value="충청">
+충청
+</option>
+
+<option value="인천">
+인천
+</option>
+
+<option value="부산">
+부산
+</option>
+
+</select>
+
+</div>
+
+
+<button
+class="main-button"
+onclick="searchUniversities()"
+>
+🧭 목적지 찾기
+</button>
+
+</section>
+
+
+<!-- RESULT -->
+
+<section
+class="page"
+id="resultPage"
+>
+
+<div class="eyebrow">
+DESTINATIONS FOUND
+</div>
+
+<h1 class="title">
+목적지를 찾았어!
+</h1>
+
+<p
+class="subtitle"
+id="resultInfo"
+></p>
+
+<div
+id="resultList"
+></div>
+
+</section>
+
+
+<!-- DETAIL -->
+
+<section
+class="page"
+id="detailPage"
+>
+
+<button
+class="back"
+onclick="backResults()"
+>
+← 다른 목적지 보기
+</button>
+
+<div
+id="detailContent"
+></div>
+
+</section>
+
+
+<!-- FAVORITE -->
+
+<section
+class="page"
+id="favoritePage"
+>
+
+<div class="eyebrow">
+YOUR TRAVEL MAP
+</div>
+
+<h1 class="title">
+발견한 목적지
+</h1>
+
+<p class="subtitle">
+이번 여행에서 마음에 담아둔 곳이야.
+</p>
+
+<div
+id="favoriteList"
+></div>
+
+</section>
+
+
+</main>
+
+
+<!-- TAB -->
+
+<nav
+class="tabbar"
+id="tabbar"
+>
+
+<button
+class="tab active"
+id="searchTab"
+onclick="openSearch()"
+>
+🧭<br>
+여행하기
+</button>
+
+<button
+class="tab"
+id="favoriteTab"
+onclick="openFavorites()"
+>
+✦<br>
+목적지
+</button>
+
+</nav>
+
+
+</div>
+
+
+<script>
+
+/* =========================
+   UNIVERSITIES
+========================= */
+
+const universities = [
+
+{
+id:1,
+name:"서울예술대학교",
+icon:"📷",
+fields:["사진","영상","디자인"],
+types:["수시","실기"],
+region:"경기",
+location:"경기도 안산시",
+description:"예술과 창작을 중심으로 다양한 실기와 프로젝트 기반 교육을 운영합니다.",
+website:"https://www.seoularts.ac.kr"
+},
+
+{
+id:2,
+name:"계원예술대학교",
+icon:"🎨",
+fields:["사진","디자인","미술"],
+types:["수시","실기"],
+region:"경기",
+location:"경기도 의왕시",
+description:"디자인과 예술 분야를 중심으로 다양한 창작 전공을 운영합니다.",
+website:"https://www.kaywon.ac.kr"
+},
+
+{
+id:3,
+name:"중부대학교",
+icon:"🎓",
+fields:["사진","미디어","디자인"],
+types:["수시","실기","정시"],
+region:"충청",
+location:"충청남도 금산군",
+description:"예술과 미디어를 포함한 다양한 학문 분야를 운영합니다.",
+website:"https://www.joongbu.ac.kr"
+},
+
+{
+id:4,
+name:"홍익대학교",
+icon:"🖼",
+fields:["미술","디자인","사진"],
+types:["수시","실기","정시"],
+region:"서울",
+location:"서울특별시 마포구",
+description:"미술과 디자인 분야로 잘 알려진 종합대학교입니다.",
+website:"https://www.hongik.ac.kr"
+},
+
+{
+id:5,
+name:"국민대학교",
+icon:"💻",
+fields:["디자인","공학","미디어"],
+types:["수시","실기","정시"],
+region:"서울",
+location:"서울특별시 성북구",
+description:"디자인과 공학 등 다양한 분야를 운영하는 종합대학교입니다.",
+website:"https://www.kookmin.ac.kr"
+},
+
+{
+id:6,
+name:"서울대학교",
+icon:"🔬",
+fields:["과학","공학","문학"],
+types:["수시","정시"],
+region:"서울",
+location:"서울특별시 관악구",
+description:"다양한 인문사회와 자연과학 분야를 연구합니다.",
+website:"https://www.snu.ac.kr"
+},
+
+{
+id:7,
+name:"KAIST",
+icon:"🚀",
+fields:["과학","공학","컴퓨터","AI"],
+types:["수시","정시"],
+region:"충청",
+location:"대전광역시",
+description:"과학과 기술을 중심으로 교육과 연구를 진행합니다.",
+website:"https://www.kaist.ac.kr"
+}
+
+];
+
+let selectedField="";
+let selectedType="";
+
+
+/* =========================
+   RANDOM STARS
+========================= */
+
+const stars=document.getElementById("stars");
+
+for(let i=0;i<100;i++){
+
+const star=document.createElement("div");
+
+star.className="star";
+
+const size=
+Math.random()>.9?3:
+Math.random()>.65?2:1;
+
+star.style.width=size+"px";
+star.style.height=size+"px";
+
+star.style.left=
+Math.random()*100+"%";
+
+star.style.top=
+Math.random()*75+"%";
+
+star.style.opacity=
+Math.random()*.7+.2;
+
+stars.appendChild(star);
+
+}
+
+
+/* =========================
+   CATEGORY
+========================= */
+
+document
+.querySelectorAll(".category-head")
+.forEach(button=>{
+
+button.onclick=()=>{
+
+button.parentElement
+.classList.toggle("open");
+
+};
+
+});
+
+
+/* =========================
+   FIELD
+========================= */
+
+document
+.querySelectorAll(".field")
+.forEach(button=>{
+
+button.onclick=()=>{
+
+document
+.querySelectorAll(".field")
+.forEach(item=>
+item.classList.remove("selected")
+);
+
+button.classList.add("selected");
+
+selectedField=
+button.dataset.value;
+
+};
+
+});
+
+
+/* =========================
+   TYPE
+========================= */
+
+document
+.querySelectorAll(".type")
+.forEach(button=>{
+
+button.onclick=()=>{
+
+document
+.querySelectorAll(".type")
+.forEach(item=>
+item.classList.remove("selected")
+);
+
+button.classList.add("selected");
+
+selectedType=
+button.dataset.value;
+
+};
+
+});
+
+
+/* =========================
+   PAGE
+========================= */
+
+function showPage(id){
+
+document
+.querySelectorAll(".page")
+.forEach(page=>
+page.classList.remove("active")
+);
+
+document
+.getElementById(id)
+.classList.add("active");
+
+document
+.querySelector(".app")
+.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
+}
+
+
+/* =========================
+   SKY MODE
+========================= */
+
+function setSky(mode){
+
+const sky=
+document.getElementById("sky");
+
+sky.className=
+"sky "+mode;
+
+
+/* night */
+
+const night=
+mode==="night";
+
+document
+.getElementById("stars")
+.style.opacity=
+night?".95":"0";
+
+document
+.getElementById("milkyWay")
+.style.opacity=
+night?".65":"0";
+
+document
+.getElementById("moon")
+.style.opacity=
+night?".85":"0";
+
+document
+.getElementById("shootingStar")
+.style.opacity=
+night?".5":"0";
+
+
+/* aurora */
+
+document
+.getElementById("aurora")
+.style.opacity=
+mode==="aurora"?".8":"0";
+
+
+/* clouds */
+
+const clouds=
+document.getElementById("clouds");
+
+clouds.style.opacity=
+mode==="day"?".9":
+mode==="sunset"?".65":
+mode==="aurora"?".3":".25";
+
+
+/* sunset */
+
+document
+.getElementById("sunsetGlow")
+.style.opacity=
+mode==="sunset"?"1":"0";
+
+
+/* birds */
+
+document
+.getElementById("birds")
+.style.opacity=
+mode==="day"||mode==="sunset"
+?".7":"0";
+
+}
+
+
+/* =========================
+   FLIGHT POSITION
+========================= */
+
+function movePlane(progress){
+
+const plane=
+document.getElementById("plane");
+
+const trail=
+document.getElementById("trail");
+
+
+const positions={
+
+0:"5%",
+1:"25%",
+2:"47%",
+3:"68%",
+4:"86%"
+
+};
+
+
+const trails={
+
+0:"5%",
+1:"25%",
+2:"47%",
+3:"68%",
+4:"86%"
+
+};
+
+
+plane.style.left=
+positions[progress];
+
+trail.style.width=
+trails[progress];
+
+}
+
+
+/* =========================
+   START
+========================= */
+
+function startApp(){
+
+document
+.getElementById("tabbar")
+.style.display="flex";
+
+movePlane(1);
+
+setSky("aurora");
+
+showPage("searchPage");
+
+}
+
+
+/* =========================
+   SEARCH
+========================= */
+
+function searchUniversities(){
+
+const region=
+document
+.getElementById("region")
+.value;
+
+if(
+!selectedField||
+!selectedType||
+!region
+){
+
+alert(
+"여행 조건을 모두 선택해주세요!"
+);
+
+return;
+
+}
+
+
+const results=
+
+universities
+
+.map(uni=>{
+
+let score=0;
+
+if(
+uni.fields.includes(selectedField)
+)score+=50;
+
+if(
+uni.types.includes(selectedType)
+)score+=30;
+
+if(
+uni.region===region
+)score+=20;
+
+return{
+...uni,
+score
+};
+
+})
+
+.filter(uni=>
+uni.score>0
+)
+
+.sort((a,b)=>
+b.score-a.score
+);
+
+
+document
+.getElementById("resultInfo")
+.textContent=
+`${selectedField} · ${selectedType} · ${region} 방향으로 찾았어.`;
+
+
+const list=
+document
+.getElementById("resultList");
+
+list.innerHTML="";
+
+
+results
+.slice(0,6)
+.forEach(uni=>{
+
+list.innerHTML+=`
+
+<div
+class="uni-card"
+onclick="showDetail(${uni.id})"
+>
+
+<div class="uni-icon">
+${uni.icon}
+</div>
+
+<div class="uni-main">
+
+<div class="uni-name">
+${uni.name}
+</div>
+
+<div class="uni-place">
+📍 ${uni.location}
+</div>
+
+<div class="match">
+✦ ${uni.score}% MATCH
+</div>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+
+if(results.length===0){
+
+list.innerHTML=`
+
+<div class="empty">
+
+아직 이 하늘 아래에서는<br>
+딱 맞는 목적지를 찾지 못했어 ☁️
+
+</div>
+
+`;
+
+}
+
+
+movePlane(2);
+
+setSky("day");
+
+showPage("resultPage");
+
+}
+
+
+/* =========================
+   DETAIL
+========================= */
+
+function showDetail(id){
+
+const uni=
+
+universities.find(
+uni=>uni.id===id
+);
+
+
+const favorites=
+
+JSON.parse(
+localStorage.getItem("uniFavorites")
+)||[];
+
+
+const saved=
+
+favorites.includes(id);
+
+
+document
+.getElementById("detailContent")
+.innerHTML=`
+
+<div class="detail">
+
+<div class="detail-top">
+
+<div class="big-icon">
+${uni.icon}
+</div>
+
+<div>
+
+<h2>
+${uni.name}
+</h2>
+
+<div class="location">
+📍 ${uni.location}
+</div>
+
+</div>
+
+</div>
+
+
+<div class="detail-section">
+
+<h4>
+✦ 발견한 분야
+</h4>
+
+<p>
+${uni.fields.join(" · ")}
+</p>
+
+</div>
+
+
+<div class="detail-section">
+
+<h4>
+🧳 여행 가능한 전형
+</h4>
+
+<p>
+${uni.types.join(" · ")}
+</p>
+
+</div>
+
+
+<div class="detail-section">
+
+<h4>
+DESTINATION NOTE
+</h4>
+
+<p>
+${uni.description}
+</p>
+
+</div>
+
+
+<button
+class="save-button ${saved?"saved":""}"
+onclick="toggleFavorite(${uni.id})"
+>
+
+${
+
+saved
+?"♥ 목적지에 저장됨"
+:"♡ 이곳을 저장하기"
+
+}
+
+</button>
+
+
+<a
+class="homepage"
+href="${uni.website}"
+target="_blank"
+>
+
+↗ 공식 홈페이지
+
+</a>
+
+</div>
+
+`;
+
+
+movePlane(3);
+
+setSky("sunset");
+
+showPage("detailPage");
+
+}
+
+
+/* =========================
+   FAVORITE
+========================= */
+
+function toggleFavorite(id){
+
+let favorites=
+
+JSON.parse(
+localStorage.getItem("uniFavorites")
+)||[];
+
+
+if(
+favorites.includes(id)
+){
+
+favorites=
+favorites.filter(
+item=>item!==id
+);
+
+}else{
+
+favorites.push(id);
+
+}
+
+
+localStorage.setItem(
+"uniFavorites",
+JSON.stringify(favorites)
+);
+
+
+showDetail(id);
+
+}
+
+
+function openFavorites(){
+
+const favorites=
+
+JSON.parse(
+localStorage.getItem("uniFavorites")
+)||[];
+
+
+const saved=
+
+universities.filter(
+uni=>
+favorites.includes(uni.id)
+);
+
+
+const list=
+
+document
+.getElementById("favoriteList");
+
+
+list.innerHTML="";
+
+
+if(saved.length===0){
+
+list.innerHTML=`
+
+<div class="empty">
+
+아직 여행 지도에<br>
+표시된 목적지가 없어 ✦<br><br>
+
+마음에 드는 대학을 발견하면<br>
+이곳에 하나씩 기록돼.
+
+</div>
+
+`;
+
+}else{
+
+saved.forEach(uni=>{
+
+list.innerHTML+=`
+
+<div
+class="uni-card"
+onclick="showDetail(${uni.id})"
+>
+
+<div class="uni-icon">
+${uni.icon}
+</div>
+
+<div class="uni-main">
+
+<div class="uni-name">
+${uni.name}
+</div>
+
+<div class="uni-place">
+📍 ${uni.location}
+</div>
+
+<div class="match">
+✦ SAVED DESTINATION
+</div>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+}
+
+
+movePlane(4);
+
+setSky("night");
+
+showPage("favoritePage");
+
+setTab("favoriteTab");
+
+}
+
+
+/* =========================
+   BACK
+========================= */
+
+function backResults(){
+
+movePlane(2);
+
+setSky("day");
+
+showPage("resultPage");
+
+}
+
+
+/* =========================
+   SEARCH TAB
+========================= */
+
+function openSearch(){
+
+movePlane(1);
+
+setSky("aurora");
+
+showPage("searchPage");
+
+setTab("searchTab");
+
+}
+
+
+/* =========================
+   TAB
+========================= */
+
+function setTab(id){
+
+document
+.querySelectorAll(".tab")
+.forEach(tab=>
+tab.classList.remove("active")
+);
+
+document
+.getElementById(id)
+.classList.add("active");
+
+}
+
+</script>
+
+</body>
+</html>
