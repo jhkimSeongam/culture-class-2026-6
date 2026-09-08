@@ -1,1 +1,0 @@
-# culture-class-2026-6
