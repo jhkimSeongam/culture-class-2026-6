@@ -1,0 +1,3539 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>대학 어디? | Sky Journey</title>
+
+<style>
+
+/* =========================
+   RESET
+========================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+
+  display: grid;
+  place-items: center;
+
+  background:
+    radial-gradient(circle at top, #35395c, transparent 45%),
+    #10111b;
+
+  font-family:
+    Pretendard,
+    "Malgun Gothic",
+    sans-serif;
+}
+
+
+/* =========================
+   PHONE
+========================= */
+
+.phone {
+  position: relative;
+
+  width: 390px;
+  height: 844px;
+
+  max-height: 94vh;
+
+  overflow: hidden;
+
+  border-radius: 38px;
+  border: 7px solid #12131c;
+
+  background: #11131e;
+
+  box-shadow:
+    0 30px 80px rgba(0,0,0,.55);
+}
+
+
+/* =========================
+   STATUS BAR
+========================= */
+
+.status-bar {
+  position: absolute;
+
+  z-index: 100;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+
+  padding-left: 24px;
+
+  color: rgba(255,255,255,.92);
+
+  font-size: 12px;
+  font-weight: 700;
+
+  pointer-events: none;
+
+  text-shadow:
+    0 2px 6px rgba(0,0,0,.3);
+}
+
+
+/* =========================
+   SKY
+========================= */
+
+.sky {
+  position: absolute;
+  inset: 0;
+
+  overflow: hidden;
+
+  transition:
+    background 1.4s ease;
+}
+
+
+/* =========================
+   NIGHT
+========================= */
+
+.sky.night {
+  background:
+    radial-gradient(
+      ellipse at 70% 15%,
+      rgba(89,85,180,.22),
+      transparent 30%
+    ),
+    linear-gradient(
+      to bottom,
+      #03040d,
+      #10152c 48%,
+      #263858
+    );
+}
+
+
+/* =========================
+   DAY
+========================= */
+
+.sky.day {
+  background:
+    linear-gradient(
+      to bottom,
+      #4d9dd1,
+      #91cee9 55%,
+      #d8edf2
+    );
+}
+
+
+/* =========================
+   SUNSET
+========================= */
+
+.sky.sunset {
+  background:
+    linear-gradient(
+      to bottom,
+      #34274d 0%,
+      #80506d 28%,
+      #d97b76 55%,
+      #ffbd82 100%
+    );
+}
+
+
+/* =========================
+   STARS
+========================= */
+
+.stars {
+  position: absolute;
+  inset: 0;
+
+  z-index: 1;
+
+  opacity: 1;
+
+  transition:
+    opacity 1s ease;
+
+  pointer-events: none;
+}
+
+.star {
+  position: absolute;
+
+  border-radius: 50%;
+
+  background: white;
+
+  box-shadow:
+    0 0 6px rgba(255,255,255,.85);
+}
+
+
+/* =========================
+   MILKY WAY
+========================= */
+
+.milky-way {
+  position: absolute;
+
+  z-index: 2;
+
+  width: 160%;
+  height: 180px;
+
+  top: 80px;
+  left: -30%;
+
+  transform:
+    rotate(-17deg);
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(110,130,255,.05),
+      rgba(220,220,255,.45),
+      rgba(120,140,255,.08),
+      transparent
+    );
+
+  filter:
+    blur(20px);
+
+  opacity: .75;
+
+  transition:
+    opacity 1s ease;
+
+  pointer-events: none;
+}
+
+
+/* =========================
+   DESTINATION MILKY WAY
+========================= */
+
+.sky.milky {
+  background:
+    radial-gradient(ellipse at 50% 35%, rgba(78,88,150,.28), transparent 38%),
+    linear-gradient(to bottom, #02030a, #0a1025 52%, #1b2945);
+}
+
+.milky-sparkle {
+  position: absolute;
+  z-index: 3;
+  border-radius: 50%;
+  background: white;
+  opacity: .25;
+  pointer-events: none;
+  box-shadow: 0 0 6px rgba(255,255,255,.95), 0 0 14px rgba(150,190,255,.6);
+  animation: twinkle var(--twinkle-time, 2.8s) ease-in-out infinite;
+  animation-delay: var(--twinkle-delay, 0s);
+}
+
+@keyframes twinkle {
+  0%, 100% { transform: scale(.7); opacity: .2; }
+  50% { transform: scale(1.8); opacity: 1; }
+}
+
+/* =========================
+   CLOUDS
+========================= */
+
+.cloud-layer {
+  position: absolute;
+
+  z-index: 5;
+
+  left: -10%;
+  bottom: -10%;
+
+  width: 120%;
+  height: 55%;
+
+  opacity: .25;
+
+  background:
+
+    radial-gradient(
+      circle at 8% 75%,
+      white 0 10%,
+      transparent 11%
+    ),
+
+    radial-gradient(
+      circle at 25% 55%,
+      white 0 15%,
+      transparent 16%
+    ),
+
+    radial-gradient(
+      circle at 48% 72%,
+      white 0 17%,
+      transparent 18%
+    ),
+
+    radial-gradient(
+      circle at 70% 55%,
+      white 0 14%,
+      transparent 15%
+    ),
+
+    radial-gradient(
+      circle at 90% 75%,
+      white 0 18%,
+      transparent 19%
+    );
+
+  filter:
+    blur(12px);
+
+  transition:
+    opacity 1.2s ease;
+}
+
+
+/* =========================
+   SUNSET GLOW
+========================= */
+
+.sunset-glow {
+  position: absolute;
+
+  z-index: 3;
+
+  inset: 0;
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      ellipse at 60% 76%,
+      rgba(255,226,145,.75),
+      transparent 26%
+    );
+
+  transition:
+    opacity 1s ease;
+}
+
+
+/* =========================
+   BIRDS
+========================= */
+
+.birds {
+  position: absolute;
+
+  z-index: 10;
+
+  top: 190px;
+  right: 45px;
+
+  font-size: 14px;
+
+  letter-spacing: 7px;
+
+  opacity: 0;
+
+  transition:
+    opacity 1s ease;
+
+  color: rgba(50,50,60,.65);
+}
+
+
+/* =========================
+   AIRPLANE
+========================= */
+
+.flight {
+  position: absolute;
+
+  z-index: 30;
+
+  top: 50px;
+  left: 7%;
+
+  width: 86%;
+  height: 60px;
+
+  pointer-events: none;
+}
+
+.trail {
+  position: absolute;
+
+  left: 0;
+  top: 25px;
+
+  width: 5%;
+  height: 2px;
+
+  border-radius: 10px;
+
+  background:
+    linear-gradient(
+      to right,
+      transparent,
+      rgba(255,255,255,.8)
+    );
+
+  transition:
+    width 1.3s ease;
+}
+
+.plane {
+  position: absolute;
+
+  left: 5%;
+  top: 10px;
+
+  font-size: 19px;
+
+  transform:
+    rotate(10deg);
+
+  transition:
+    left 1.3s cubic-bezier(.2,.8,.2,1);
+
+  filter:
+    drop-shadow(
+      0 3px 5px rgba(0,0,0,.2)
+    );
+
+  animation:
+    planeFloat 3s ease-in-out infinite;
+}
+
+@keyframes planeFloat {
+
+  50% {
+    transform:
+      translateY(-3px)
+      rotate(10deg);
+  }
+
+}
+
+
+/* =========================
+   METEORS
+========================= */
+
+#meteorContainer {
+  position: absolute;
+
+  z-index: 6;
+
+  inset: 0;
+
+  pointer-events: none;
+
+  overflow: hidden;
+}
+
+.meteor {
+  position: absolute;
+
+  width: 3px;
+  height: 3px;
+
+  border-radius: 50%;
+
+  background: white;
+
+  opacity: 0;
+
+  box-shadow:
+    0 0 8px white,
+    0 0 16px rgba(180,210,255,.8);
+
+  animation:
+    meteorFall linear forwards;
+}
+
+.meteor::before {
+
+  content: "";
+
+  position: absolute;
+
+  right: 0;
+  top: 50%;
+
+  width: var(--tail-length);
+  height: 1px;
+
+  transform:
+    translateY(-50%);
+
+  background:
+    linear-gradient(
+      to left,
+      white,
+      rgba(255,255,255,.5),
+      transparent
+    );
+}
+
+@keyframes meteorFall {
+
+  0% {
+
+    opacity: 0;
+
+    transform:
+      translate(0,0)
+      rotate(-35deg);
+
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  100% {
+
+    opacity: 0;
+
+    transform:
+      translate(
+        var(--meteor-x),
+        var(--meteor-y)
+      )
+      rotate(-35deg);
+
+  }
+
+}
+
+
+/* =========================
+   APP
+========================= */
+
+.app {
+  position: relative;
+
+  z-index: 20;
+
+  height: 100%;
+
+  overflow-y: auto;
+
+  padding:
+    125px 18px 95px;
+
+  scrollbar-width: none;
+}
+
+.app::-webkit-scrollbar {
+  display: none;
+}
+
+
+/* =========================
+   PAGE
+========================= */
+
+.page {
+  display: none;
+}
+
+.page.active {
+
+  display: block;
+
+  animation:
+    pageIn .6s ease;
+}
+
+@keyframes pageIn {
+
+  from {
+
+    opacity: 0;
+
+    transform:
+      translateY(15px);
+
+  }
+
+  to {
+
+    opacity: 1;
+
+    transform:
+      translateY(0);
+
+  }
+
+}
+
+
+/* =========================
+   TEXT
+========================= */
+
+.eyebrow {
+
+  color:
+    rgba(255,255,255,.68);
+
+  font-size: 10px;
+
+  font-weight: 800;
+
+  letter-spacing: 1.5px;
+
+  margin-bottom: 8px;
+}
+
+.title {
+
+  color: white;
+
+  font-size: 30px;
+
+  font-weight: 900;
+
+  letter-spacing: -2px;
+}
+
+.subtitle {
+
+  margin-top: 8px;
+  margin-bottom: 20px;
+
+  color:
+    rgba(255,255,255,.78);
+
+  font-size: 12px;
+
+  line-height: 1.6;
+}
+
+
+/* =========================
+   START
+========================= */
+
+.start {
+
+  min-height: 610px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  align-items: center;
+
+  text-align: center;
+}
+
+.start-badge {
+
+  margin-bottom: 22px;
+
+  padding:
+    8px 14px;
+
+  border-radius: 20px;
+
+  background:
+    rgba(255,255,255,.1);
+
+  backdrop-filter:
+    blur(10px);
+
+  color:
+    rgba(255,255,255,.82);
+
+  font-size: 10px;
+
+  letter-spacing: 1px;
+}
+
+.start h1 {
+
+  color: white;
+
+  font-size: 48px;
+
+  font-weight: 900;
+
+  letter-spacing: -4px;
+}
+
+.start p {
+
+  margin-top: 17px;
+
+  color:
+    rgba(255,255,255,.8);
+
+  font-size: 14px;
+
+  line-height: 1.8;
+}
+
+
+/* =========================
+   BUTTON
+========================= */
+
+.main-button {
+
+  width: 100%;
+
+  margin-top: 30px;
+
+  padding: 18px;
+
+  border: none;
+
+  border-radius: 21px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ffe7aa,
+      #ffc66d
+    );
+
+  color:
+    #4d4032;
+
+  font-size: 14px;
+
+  font-weight: 900;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 12px 25px rgba(0,0,0,.16);
+
+  transition:
+    transform .2s ease;
+}
+
+.main-button:hover {
+
+  transform:
+    translateY(-2px);
+}
+
+
+/* =========================
+   CARD
+========================= */
+
+.card {
+
+  position: relative;
+
+  margin-bottom: 12px;
+
+  padding: 18px;
+
+  border-radius: 24px;
+
+  background:
+    rgba(255,255,255,.9);
+
+  box-shadow:
+    0 15px 35px rgba(0,0,0,.12);
+
+  backdrop-filter:
+    blur(15px);
+}
+
+.card-title {
+
+  margin-bottom: 13px;
+
+  color: #35313f;
+
+  font-size: 14px;
+
+  font-weight: 900;
+}
+
+
+/* =========================
+   CATEGORY
+========================= */
+
+.category {
+
+  border-top:
+    1px solid #ece9ef;
+}
+
+.category:first-of-type {
+  border-top: none;
+}
+
+.category-head {
+
+  width: 100%;
+
+  padding: 13px 0;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  border: none;
+
+  background: transparent;
+
+  color: #55505f;
+
+  font-size: 13px;
+
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.plus {
+
+  width: 22px;
+  height: 22px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 50%;
+
+  background: #efedf1;
+
+  transition:
+    .3s;
+}
+
+.category.open .plus {
+
+  transform:
+    rotate(45deg);
+
+  background: #635e73;
+
+  color: white;
+}
+
+.field-list {
+
+  display: none;
+
+  flex-wrap: wrap;
+
+  gap: 7px;
+
+  padding-bottom: 13px;
+}
+
+.category.open .field-list {
+  display: flex;
+}
+
+.chip {
+
+  padding:
+    9px 12px;
+
+  border:
+    1px solid #e2dee6;
+
+  border-radius: 18px;
+
+  background: white;
+
+  color: #6a6573;
+
+  font-size: 11px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.chip.selected {
+
+  background: #625d74;
+
+  border-color: #625d74;
+
+  color: white;
+}
+
+
+/* =========================
+   OPTIONS
+========================= */
+
+.option-row {
+
+  display: flex;
+
+  gap: 7px;
+}
+
+.option {
+
+  flex: 1;
+
+  padding:
+    13px 6px;
+
+  border:
+    1px solid #e5e1e7;
+
+  border-radius: 15px;
+
+  background: white;
+
+  color: #6a6573;
+
+  font-size: 12px;
+
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.option.selected {
+
+  background: #625d74;
+
+  border-color: #625d74;
+
+  color: white;
+}
+
+
+/* =========================
+   SELECT
+========================= */
+
+select {
+
+  width: 100%;
+
+  padding: 14px;
+
+  border:
+    1px solid #e5e1e7;
+
+  border-radius: 15px;
+
+  background: white;
+
+  color: #55505f;
+
+  outline: none;
+}
+
+
+/* =========================
+   UNIVERSITY CARD
+========================= */
+
+.uni-card {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 13px;
+
+  margin-bottom: 11px;
+
+  padding: 15px;
+
+  border-radius: 23px;
+
+  background:
+    rgba(255,255,255,.91);
+
+  box-shadow:
+    0 12px 30px rgba(0,0,0,.12);
+
+  cursor: pointer;
+
+  transition:
+    transform .2s ease;
+}
+
+.uni-card:hover {
+
+  transform:
+    translateY(-2px);
+}
+
+.uni-icon {
+
+  width: 55px;
+  height: 55px;
+
+  display: grid;
+
+  place-items: center;
+
+  border-radius: 18px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #d9e7ed,
+      #ded4e8
+    );
+
+  font-size: 23px;
+}
+
+.uni-main {
+  flex: 1;
+}
+
+.uni-name {
+
+  color: #373344;
+
+  font-size: 15px;
+
+  font-weight: 900;
+}
+
+.uni-place {
+
+  margin-top: 5px;
+
+  color: #898493;
+
+  font-size: 10px;
+}
+
+.match {
+
+  margin-top: 7px;
+
+  color: #9b7745;
+
+  font-size: 10px;
+
+  font-weight: 900;
+}
+
+
+/* =========================
+   DETAIL
+========================= */
+
+.back {
+
+  margin-bottom: 14px;
+
+  border: none;
+
+  background: none;
+
+  color: white;
+
+  font-size: 12px;
+
+  cursor: pointer;
+}
+
+.detail {
+
+  padding: 22px;
+
+  border-radius: 28px;
+
+  background:
+    rgba(255,252,249,.92);
+
+  box-shadow:
+    0 20px 45px rgba(0,0,0,.2);
+}
+
+.detail-top {
+
+  display: flex;
+
+  gap: 15px;
+
+  padding-bottom: 18px;
+
+  border-bottom:
+    1px solid #ece5e1;
+}
+
+.big-icon {
+
+  width: 70px;
+  height: 70px;
+
+  display: grid;
+
+  place-items: center;
+
+  border-radius: 22px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ead9cb,
+      #e8c0b5
+    );
+
+  font-size: 30px;
+}
+
+.detail h2 {
+
+  color: #3b3540;
+
+  font-size: 21px;
+}
+
+.location {
+
+  margin-top: 8px;
+
+  color: #8b8388;
+
+  font-size: 11px;
+}
+
+.detail-section {
+
+  padding:
+    16px 0;
+
+  border-bottom:
+    1px solid #ece5e1;
+}
+
+.detail-section h4 {
+
+  margin-bottom: 8px;
+
+  color: #5a5058;
+
+  font-size: 13px;
+}
+
+.detail-section p {
+
+  color: #777078;
+
+  font-size: 12px;
+
+  line-height: 1.7;
+}
+
+
+/* =========================
+   SAVE BUTTON
+========================= */
+
+.save-button {
+
+  width: 100%;
+
+  margin-top: 15px;
+
+  padding: 14px;
+
+  border:
+    1px solid #eadcdf;
+
+  border-radius: 15px;
+
+  background: white;
+
+  color: #705e66;
+
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.save-button.saved {
+
+  background: #f3d9df;
+
+  color: #a84e60;
+}
+
+.homepage {
+
+  display: block;
+
+  width: 100%;
+
+  margin-top: 9px;
+
+  padding: 14px;
+
+  border-radius: 15px;
+
+  background: #63576d;
+
+  color: white;
+
+  text-align: center;
+
+  font-size: 12px;
+
+  font-weight: 800;
+
+  text-decoration: none;
+}
+
+
+/* =========================
+   TAB BAR
+========================= */
+
+.tabbar {
+
+  position: absolute;
+
+  z-index: 50;
+
+  bottom: 0;
+
+  width: 100%;
+  height: 76px;
+
+  display: none;
+
+  align-items: center;
+
+  justify-content: space-around;
+
+  background:
+    rgba(13,17,29,.65);
+
+  backdrop-filter:
+    blur(20px);
+}
+
+.tab {
+
+  border: none;
+
+  background: transparent;
+
+  color:
+    rgba(255,255,255,.48);
+
+  font-size: 11px;
+
+  line-height: 1.8;
+
+  cursor: pointer;
+}
+
+.tab.active {
+
+  color: #ffe2a0;
+}
+
+
+/* =========================
+   JOURNEY MAP
+========================= */
+
+.journey-map {
+  position: relative;
+  margin-top: 22px;
+  padding: 8px 0;
+}
+
+.journey-line {
+  position: absolute;
+  left: 29px;
+  top: 35px;
+  bottom: 35px;
+  width: 2px;
+  background: rgba(255,255,255,.35);
+}
+
+.journey-stop {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+  padding: 16px;
+  border-radius: 23px;
+  background: rgba(255,255,255,.90);
+  box-shadow: 0 12px 30px rgba(0,0,0,.12);
+}
+
+.journey-dot {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  border-radius: 16px;
+  background: #eef0f5;
+  font-size: 20px;
+}
+
+.journey-stop b {
+  display: block;
+  color: #403a48;
+  font-size: 13px;
+  margin-bottom: 5px;
+}
+
+.journey-stop span {
+  display: block;
+  color: #85808b;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+/* =========================
+   EMPTY
+========================= */
+
+.empty {
+
+  padding:
+    45px 20px;
+
+  border-radius: 24px;
+
+  background:
+    rgba(255,255,255,.9);
+
+  color: #686372;
+
+  text-align: center;
+
+  font-size: 13px;
+
+  line-height: 1.8;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:600px) {
+
+  body {
+    background: #11131e;
+  }
+
+  .phone {
+
+    width: 100vw;
+    height: 100vh;
+
+    max-height: none;
+
+    border: none;
+    border-radius: 0;
+  }
+
+}
+
+
+/* =========================
+   UNIVERSITY CONSTELLATION
+========================= */
+.constellation-card{position:relative;margin-top:24px;min-height:390px;border-radius:28px;overflow:hidden;background:linear-gradient(160deg,rgba(5,9,27,.88),rgba(20,29,62,.82));border:1px solid rgba(255,255,255,.12);box-shadow:0 18px 45px rgba(0,0,0,.18)}
+.constellation-card:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 18% 24%,rgba(126,119,255,.16),transparent 24%),radial-gradient(circle at 78% 72%,rgba(255,207,134,.10),transparent 25%);pointer-events:none}
+.constellation-hint{position:relative;z-index:3;padding:17px 18px;color:rgba(255,255,255,.72);font-size:11px;text-align:center;letter-spacing:.2px}
+.constellation-sky{position:absolute;left:0;right:0;top:42px;bottom:0}
+.constellation-empty{position:absolute;inset:75px 24px 30px;display:none;place-items:center;text-align:center;color:rgba(255,255,255,.65);font-size:13px;line-height:1.9}
+.constellation-star{position:absolute;transform:translate(-50%,-50%);border:0;background:transparent;color:white;cursor:pointer;text-align:center;z-index:3;font-family:inherit}
+.constellation-star .star-dot{display:block;width:18px;height:18px;margin:auto;border-radius:50%;background:#fff4bd;box-shadow:0 0 10px rgba(255,235,153,.95),0 0 26px rgba(151,175,255,.6);animation:constellationTwinkle var(--twinkle,3s) ease-in-out infinite var(--delay,0s)}
+.constellation-star .star-dot:after{content:"✦";position:absolute;left:50%;top:-9px;transform:translateX(-50%);font-size:25px;color:#fff6c8;text-shadow:0 0 12px rgba(255,255,255,.8)}
+.constellation-star .star-name{display:block;margin-top:12px;min-width:80px;max-width:110px;transform:translateX(-31%);color:rgba(255,255,255,.92);font-size:10px;line-height:1.35;text-shadow:0 2px 8px #000}
+.constellation-line{position:absolute;height:1px;background:linear-gradient(90deg,transparent,rgba(210,220,255,.6),transparent);transform-origin:left center;z-index:1;opacity:.75}
+@keyframes constellationTwinkle{0%,100%{transform:scale(.8);opacity:.7}50%{transform:scale(1.28);opacity:1}}
+.journey-mini{display:flex;align-items:center;justify-content:center;gap:8px;margin:20px 0 8px;color:rgba(255,255,255,.72);font-size:10px}.journey-mini i{width:16px;height:1px;background:rgba(255,255,255,.25)}
+
+</style>
+</head>
+
+
+<body>
+
+<div class="phone">
+
+
+<!-- =========================
+     STATUS BAR
+========================= -->
+
+<div class="status-bar">
+  <span id="currentTime">9:41</span>
+</div>
+
+
+<!-- =========================
+     SKY
+========================= -->
+
+<div
+  class="sky night"
+  id="sky"
+>
+
+  <div
+    class="stars"
+    id="stars"
+  ></div>
+
+
+  <div
+    class="milky-way"
+    id="milkyWay"
+  ></div>
+
+
+  <div id="milkySparkles"></div>
+
+
+  <div
+    class="sunset-glow"
+    id="sunsetGlow"
+  ></div>
+
+
+  <div
+    class="birds"
+    id="birds"
+  >
+    〰 〰 〰
+  </div>
+
+
+  <div
+    class="cloud-layer"
+    id="clouds"
+  ></div>
+
+
+  <div
+    id="meteorContainer"
+  ></div>
+
+
+  <!-- 비행기 -->
+
+  <div class="flight">
+
+    <div
+      class="trail"
+      id="trail"
+    ></div>
+
+    <div
+      class="plane"
+      id="plane"
+    >
+      ✈
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =========================
+     APP
+========================= -->
+
+<main class="app">
+
+
+<!-- =========================
+     START PAGE
+========================= -->
+
+<section
+  class="page active"
+  id="startPage"
+>
+
+  <div class="start">
+
+    <div class="start-badge">
+      ✦ SKY JOURNEY
+    </div>
+
+    <h1>
+      대학 어디?
+    </h1>
+
+    <p>
+      하늘을 여행하며<br>
+      나에게 맞는 목적지를 찾아보자.
+    </p>
+
+    <button
+      class="main-button"
+      onclick="startApp()"
+    >
+      🧭 여행 시작하기
+    </button>
+
+  </div>
+
+</section>
+
+
+<!-- =========================
+     SEARCH PAGE
+========================= -->
+
+<section
+  class="page"
+  id="searchPage"
+>
+
+  <div class="eyebrow">
+    YOUR FLIGHT PLAN
+  </div>
+
+  <h1 class="title">
+    어디로 떠날까?
+  </h1>
+
+  <p class="subtitle">
+    여행의 방향을 정해보자.
+  </p>
+
+
+  <!-- 관심 분야 -->
+
+  <div class="card">
+
+    <div class="card-title">
+      ✦ 관심 분야
+    </div>
+
+
+    <!-- 예술 -->
+
+    <div class="category">
+
+      <button class="category-head">
+
+        🎨 예술 · 창작
+
+        <span class="plus">
+          +
+        </span>
+
+      </button>
+
+      <div class="field-list">
+
+        <button
+          class="chip field"
+          data-value="사진"
+        >
+          📷 사진
+        </button>
+
+        <button
+          class="chip field"
+          data-value="영상"
+        >
+          🎬 영상
+        </button>
+
+        <button
+          class="chip field"
+          data-value="디자인"
+        >
+          🎨 디자인
+        </button>
+
+        <button
+          class="chip field"
+          data-value="미술"
+        >
+          🖼 미술
+        </button>
+
+        <button
+          class="chip field"
+          data-value="음악"
+        >
+          🎵 음악
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- 과학 -->
+
+    <div class="category">
+
+      <button class="category-head">
+
+        🔬 과학 · 공학
+
+        <span class="plus">
+          +
+        </span>
+
+      </button>
+
+      <div class="field-list">
+
+        <button
+          class="chip field"
+          data-value="과학"
+        >
+          과학
+        </button>
+
+        <button
+          class="chip field"
+          data-value="공학"
+        >
+          공학
+        </button>
+
+        <button
+          class="chip field"
+          data-value="컴퓨터"
+        >
+          컴퓨터
+        </button>
+
+        <button
+          class="chip field"
+          data-value="AI"
+        >
+          AI
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- 인문 -->
+
+    <div class="category">
+
+      <button class="category-head">
+
+        📚 인문 · 사회
+
+        <span class="plus">
+          +
+        </span>
+
+      </button>
+
+      <div class="field-list">
+
+        <button
+          class="chip field"
+          data-value="문학"
+        >
+          문학
+        </button>
+
+        <button
+          class="chip field"
+          data-value="심리"
+        >
+          심리
+        </button>
+
+        <button
+          class="chip field"
+          data-value="사회"
+        >
+          사회
+        </button>
+
+        <button
+          class="chip field"
+          data-value="외국어"
+        >
+          외국어
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- 실용 -->
+
+    <div class="category">
+
+      <button class="category-head">
+
+        💼 경영 · 실용
+
+        <span class="plus">
+          +
+        </span>
+
+      </button>
+
+      <div class="field-list">
+
+        <button
+          class="chip field"
+          data-value="경영"
+        >
+          경영
+        </button>
+
+        <button
+          class="chip field"
+          data-value="경제"
+        >
+          경제
+        </button>
+
+        <button
+          class="chip field"
+          data-value="미디어"
+        >
+          미디어
+        </button>
+
+        <button
+          class="chip field"
+          data-value="관광"
+        >
+          관광
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- 지원 방식 -->
+
+  <div class="card">
+
+    <div class="card-title">
+      📝 지원 방식
+    </div>
+
+    <div class="option-row">
+
+      <button
+        class="option type"
+        data-value="수시"
+      >
+        수시
+      </button>
+
+      <button
+        class="option type"
+        data-value="실기"
+      >
+        실기
+      </button>
+
+      <button
+        class="option type"
+        data-value="정시"
+      >
+        정시
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- 지역 -->
+
+  <div class="card">
+
+    <div class="card-title">
+      📍 여행할 지역
+    </div>
+
+    <select id="region">
+
+      <option value="">
+        지역 선택
+      </option>
+
+      <option value="서울">
+        서울
+      </option>
+
+      <option value="경기">
+        경기
+      </option>
+
+      <option value="충청">
+        충청
+      </option>
+
+      <option value="인천">
+        인천
+      </option>
+
+      <option value="부산">
+        부산
+      </option>
+
+    </select>
+
+  </div>
+
+
+  <button
+    class="main-button"
+    onclick="searchUniversities()"
+  >
+    🧭 목적지 찾기
+  </button>
+
+</section>
+
+
+<!-- =========================
+     RESULT PAGE
+========================= -->
+
+<section
+  class="page"
+  id="resultPage"
+>
+
+  <div class="eyebrow">
+    DESTINATIONS FOUND
+  </div>
+
+  <h1 class="title">
+    목적지를 찾았어!
+  </h1>
+
+  <p
+    class="subtitle"
+    id="resultInfo"
+  ></p>
+
+  <div
+    id="resultList"
+  ></div>
+
+</section>
+
+
+<!-- =========================
+     DETAIL PAGE
+========================= -->
+
+<section
+  class="page"
+  id="detailPage"
+>
+
+  <button
+    class="back"
+    onclick="goBackFromDetail()"
+  >
+    ← 다른 목적지 보기
+  </button>
+
+  <div
+    id="detailContent"
+  ></div>
+
+</section>
+
+
+<!-- =========================
+     MAP PAGE
+========================= -->
+
+<section class="page" id="mapPage">
+  <div class="eyebrow">MY UNIVERSITY CONSTELLATION</div>
+  <h1 class="title">나의 대학 별자리</h1>
+  <p class="subtitle">최근 탐색한 대학들이 밤하늘의 별이 되었어.</p>
+
+  <div class="constellation-card">
+    <div class="constellation-hint">✦ 별을 누르면 그 대학을 다시 볼 수 있어</div>
+    <div class="constellation-sky" id="constellationSky"></div>
+    <div class="constellation-empty" id="constellationEmpty">
+      🌟 아직 별자리가 만들어지지 않았어.<br>
+      첫 번째 대학을 탐색하면 여기에 별이 떠.
+    </div>
+  </div>
+
+  <div class="journey-mini">
+    <span>🌌 시작</span><i></i><span>☁️ 탐색</span><i></i><span>🌇 발견</span><i></i><span>✨ 목적지</span>
+  </div>
+</section>
+
+
+<!-- =========================
+     FAVORITE PAGE
+========================= -->
+
+<section
+  class="page"
+  id="favoritePage"
+>
+
+  <div class="eyebrow">
+    YOUR TRAVEL MAP
+  </div>
+
+  <h1 class="title">
+    발견한 목적지
+  </h1>
+
+  <p class="subtitle">
+    이번 여행에서 마음에 담아둔 곳이야.
+  </p>
+
+  <div
+    id="favoriteList"
+  ></div>
+
+</section>
+
+
+</main>
+
+
+<!-- =========================
+     TAB BAR
+========================= -->
+
+<nav
+  class="tabbar"
+  id="tabbar"
+>
+
+  <button
+    class="tab active"
+    id="searchTab"
+    onclick="openSearch()"
+  >
+    🧭<br>
+    여행하기
+  </button>
+
+  <button
+    class="tab"
+    id="mapTab"
+    onclick="openMap()"
+  >
+    🗺️<br>
+    여행 지도
+  </button>
+
+  <button
+    class="tab"
+    id="favoriteTab"
+    onclick="openFavorites()"
+  >
+    ✦<br>
+    목적지
+  </button>
+
+</nav>
+
+
+</div>
+
+
+<script>
+
+
+/* =========================
+   UNIVERSITY DATA
+========================= */
+
+const universities = [
+
+  {
+    id: 1,
+    name: "서울예술대학교",
+    icon: "📷",
+
+    fields: [
+      "사진",
+      "영상",
+      "디자인"
+    ],
+
+    types: [
+      "수시",
+      "실기"
+    ],
+
+    region: "경기",
+
+    location:
+      "경기도 안산시",
+
+    description:
+      "예술과 창작을 중심으로 다양한 실기와 프로젝트 기반 교육을 운영합니다.",
+
+    website:
+      "https://www.seoularts.ac.kr"
+  },
+
+
+  {
+    id: 2,
+
+    name: "계원예술대학교",
+
+    icon: "🎨",
+
+    fields: [
+      "사진",
+      "디자인",
+      "미술"
+    ],
+
+    types: [
+      "수시",
+      "실기"
+    ],
+
+    region: "경기",
+
+    location:
+      "경기도 의왕시",
+
+    description:
+      "디자인과 예술 분야를 중심으로 다양한 창작 전공을 운영합니다.",
+
+    website:
+      "https://www.kaywon.ac.kr"
+  },
+
+
+  {
+    id: 3,
+
+    name: "중부대학교",
+
+    icon: "🎓",
+
+    fields: [
+      "사진",
+      "미디어",
+      "디자인"
+    ],
+
+    types: [
+      "수시",
+      "실기",
+      "정시"
+    ],
+
+    region: "충청",
+
+    location:
+      "충청남도 금산군",
+
+    description:
+      "예술과 미디어를 포함한 다양한 학문 분야를 운영합니다.",
+
+    website:
+      "https://www.joongbu.ac.kr"
+  },
+
+
+  {
+    id: 4,
+
+    name: "홍익대학교",
+
+    icon: "🖼",
+
+    fields: [
+      "미술",
+      "디자인",
+      "사진"
+    ],
+
+    types: [
+      "수시",
+      "실기",
+      "정시"
+    ],
+
+    region: "서울",
+
+    location:
+      "서울특별시 마포구",
+
+    description:
+      "미술과 디자인 분야로 잘 알려진 종합대학교입니다.",
+
+    website:
+      "https://www.hongik.ac.kr"
+  },
+
+
+  {
+    id: 5,
+
+    name: "국민대학교",
+
+    icon: "💻",
+
+    fields: [
+      "디자인",
+      "공학",
+      "미디어"
+    ],
+
+    types: [
+      "수시",
+      "실기",
+      "정시"
+    ],
+
+    region: "서울",
+
+    location:
+      "서울특별시 성북구",
+
+    description:
+      "디자인과 공학 등 다양한 분야를 운영하는 종합대학교입니다.",
+
+    website:
+      "https://www.kookmin.ac.kr"
+  },
+
+
+  {
+    id: 6,
+
+    name: "서울대학교",
+
+    icon: "🔬",
+
+    fields: [
+      "과학",
+      "공학",
+      "문학"
+    ],
+
+    types: [
+      "수시",
+      "정시"
+    ],
+
+    region: "서울",
+
+    location:
+      "서울특별시 관악구",
+
+    description:
+      "다양한 인문사회와 자연과학 분야를 연구합니다.",
+
+    website:
+      "https://www.snu.ac.kr"
+  },
+
+
+  {
+    id: 7,
+
+    name: "KAIST",
+
+    icon: "🚀",
+
+    fields: [
+      "과학",
+      "공학",
+      "컴퓨터",
+      "AI"
+    ],
+
+    types: [
+      "수시",
+      "정시"
+    ],
+
+    region: "충청",
+
+    location:
+      "대전광역시",
+
+    description:
+      "과학과 기술을 중심으로 교육과 연구를 진행합니다.",
+
+    website:
+      "https://www.kaist.ac.kr"
+  }
+
+];
+
+
+let selectedField = "";
+let selectedType = "";
+
+/* 목적지 탭에서 들어온 상세 화면인지 기억 */
+let detailFromFavorites = false;
+let detailFromMap = false;
+
+
+/* =========================
+   REAL TIME
+========================= */
+
+function updateTime() {
+
+  const now =
+    new Date();
+
+  const hours =
+    now.getHours();
+
+  const minutes =
+    String(
+      now.getMinutes()
+    ).padStart(2, "0");
+
+
+  document
+    .getElementById("currentTime")
+    .textContent =
+    `${hours}:${minutes}`;
+
+}
+
+
+updateTime();
+
+setInterval(
+  updateTime,
+  1000
+);
+
+
+/* =========================
+   RANDOM STARS
+========================= */
+
+const stars =
+  document.getElementById("stars");
+
+
+for (
+  let i = 0;
+  i < 100;
+  i++
+) {
+
+  const star =
+    document.createElement("div");
+
+  star.className =
+    "star";
+
+
+  const size =
+    Math.random() > .92
+      ? 3
+      : Math.random() > .65
+      ? 2
+      : 1;
+
+
+  star.style.width =
+    size + "px";
+
+  star.style.height =
+    size + "px";
+
+
+  star.style.left =
+    Math.random() * 100 + "%";
+
+  star.style.top =
+    Math.random() * 75 + "%";
+
+
+  star.style.opacity =
+    Math.random() * .7 + .2;
+
+
+  stars.appendChild(star);
+
+}
+
+
+/* =========================
+   MILKY WAY SPARKLES
+========================= */
+
+const milkySparkles = document.getElementById("milkySparkles");
+
+for (let i = 0; i < 18; i++) {
+  const sparkle = document.createElement("div");
+  sparkle.className = "milky-sparkle";
+
+  const size = 1 + Math.random() * 2.5;
+  sparkle.style.width = size + "px";
+  sparkle.style.height = size + "px";
+  sparkle.style.left = (18 + Math.random() * 68) + "%";
+  sparkle.style.top = (10 + Math.random() * 42) + "%";
+  sparkle.style.setProperty("--twinkle-time", (1.8 + Math.random() * 2.8) + "s");
+  sparkle.style.setProperty("--twinkle-delay", (-Math.random() * 3) + "s");
+
+  milkySparkles.appendChild(sparkle);
+}
+
+milkySparkles.style.transition = "opacity 1s ease";
+milkySparkles.style.opacity = "0";
+
+
+/* =========================
+   CATEGORY OPEN
+========================= */
+
+document
+  .querySelectorAll(".category-head")
+  .forEach(button => {
+
+    button.onclick = () => {
+
+      button
+        .parentElement
+        .classList
+        .toggle("open");
+
+    };
+
+  });
+
+
+/* =========================
+   FIELD SELECT
+========================= */
+
+document
+  .querySelectorAll(".field")
+  .forEach(button => {
+
+    button.onclick = () => {
+
+      document
+        .querySelectorAll(".field")
+        .forEach(item => {
+
+          item
+            .classList
+            .remove("selected");
+
+        });
+
+
+      button
+        .classList
+        .add("selected");
+
+
+      selectedField =
+        button.dataset.value;
+
+    };
+
+  });
+
+
+/* =========================
+   TYPE SELECT
+========================= */
+
+document
+  .querySelectorAll(".type")
+  .forEach(button => {
+
+    button.onclick = () => {
+
+      document
+        .querySelectorAll(".type")
+        .forEach(item => {
+
+          item
+            .classList
+            .remove("selected");
+
+        });
+
+
+      button
+        .classList
+        .add("selected");
+
+
+      selectedType =
+        button.dataset.value;
+
+    };
+
+  });
+
+
+/* =========================
+   SKY MODE
+========================= */
+
+function setSky(mode) {
+
+  const sky =
+    document.getElementById("sky");
+
+
+  sky.className =
+    "sky " + mode;
+
+
+  /* STARS */
+
+  const starsVisible =
+    mode === "night" ||
+    mode === "milky";
+
+
+  document
+    .getElementById("stars")
+    .style.opacity =
+
+    starsVisible
+      ? ".9"
+      : "0";
+
+
+  /* MILKY WAY */
+
+  document
+    .getElementById("milkyWay")
+    .style.opacity =
+
+    mode === "milky"
+      ? "1"
+      : mode === "night"
+      ? ".75"
+      : "0";
+
+
+  /* DESTINATION MILKY SPARKLES */
+
+  document
+    .getElementById("milkySparkles")
+    .style.opacity =
+
+    mode === "milky"
+      ? "1"
+      : "0";
+
+
+  /* CLOUD */
+
+  const clouds =
+    document.getElementById("clouds");
+
+
+  if (
+    mode === "day"
+  ) {
+
+    clouds.style.opacity =
+      ".9";
+
+  }
+
+  else if (
+    mode === "sunset"
+  ) {
+
+    clouds.style.opacity =
+      ".65";
+
+  }
+
+  else if (
+    mode === "milky"
+  ) {
+
+    clouds.style.opacity =
+      ".12";
+
+  }
+
+  else {
+
+    clouds.style.opacity =
+      ".22";
+
+  }
+
+
+  /* SUNSET GLOW */
+
+  document
+    .getElementById("sunsetGlow")
+    .style.opacity =
+
+    mode === "sunset"
+      ? "1"
+      : "0";
+
+
+  /* BIRDS */
+
+  document
+    .getElementById("birds")
+    .style.opacity =
+
+    mode === "day" ||
+    mode === "sunset"
+
+      ? ".7"
+      : "0";
+
+}
+
+
+/* =========================
+   PLANE MOVE
+========================= */
+
+function movePlane(progress) {
+
+  const plane =
+    document.getElementById("plane");
+
+  const trail =
+    document.getElementById("trail");
+
+
+  const positions = {
+
+    0: "5%",
+    1: "27%",
+    2: "50%",
+    3: "70%",
+    4: "87%"
+
+  };
+
+
+  plane.style.left =
+    positions[progress];
+
+
+  trail.style.width =
+    positions[progress];
+
+}
+
+
+/* =========================
+   PAGE CHANGE
+========================= */
+
+function showPage(id) {
+
+  document
+    .querySelectorAll(".page")
+    .forEach(page => {
+
+      page
+        .classList
+        .remove("active");
+
+    });
+
+
+  document
+    .getElementById(id)
+    .classList
+    .add("active");
+
+
+  /* 페이지별 하늘 자동 변경 */
+
+  if (
+    id === "startPage"
+  ) {
+
+    setSky("night");
+
+  }
+
+  else if (
+    id === "searchPage"
+  ) {
+
+    setSky("day");
+
+  }
+
+  else if (
+    id === "resultPage"
+  ) {
+
+    setSky("sunset");
+
+  }
+
+  else if (
+    id === "detailPage"
+  ) {
+
+    /* 목적지 탭에서 들어온 상세는 은하수 유지 */
+    setSky(detailFromFavorites ? "milky" : "night");
+
+  }
+
+  else if (
+    id === "mapPage"
+  ) {
+
+    setSky("night");
+
+  }
+
+  else if (
+    id === "favoritePage"
+  ) {
+
+    /* ★ 마지막 페이지 = 은하수 */
+
+    setSky("milky");
+
+  }
+
+
+  document
+    .querySelector(".app")
+    .scrollTo({
+
+      top: 0,
+
+      behavior: "smooth"
+
+    });
+
+}
+
+
+/* =========================
+   METEOR
+========================= */
+
+function createMeteor() {
+
+  const sky =
+    document.getElementById("sky");
+
+  const startPage =
+    document.getElementById("startPage");
+
+
+  /* 시작 화면 + 밤에서만 */
+
+  if (
+    !sky.classList.contains("night")
+  ) {
+    return;
+  }
+
+
+  if (
+    !startPage.classList.contains("active")
+  ) {
+    return;
+  }
+
+
+  const container =
+    document.getElementById(
+      "meteorContainer"
+    );
+
+
+  const meteor =
+    document.createElement("div");
+
+
+  meteor.className =
+    "meteor";
+
+
+  meteor.style.left =
+    Math.random() * 70 + "%";
+
+
+  meteor.style.top =
+    Math.random() * 35 + 8 + "%";
+
+
+  meteor.style.setProperty(
+
+    "--meteor-x",
+
+    90 +
+    Math.random() * 100 +
+    "px"
+
+  );
+
+
+  meteor.style.setProperty(
+
+    "--meteor-y",
+
+    70 +
+    Math.random() * 100 +
+    "px"
+
+  );
+
+
+  meteor.style.setProperty(
+
+    "--tail-length",
+
+    40 +
+    Math.random() * 55 +
+    "px"
+
+  );
+
+
+  const duration =
+    .7 +
+    Math.random() * .7;
+
+
+  meteor.style.animationDuration =
+    duration + "s";
+
+
+  container.appendChild(meteor);
+
+
+  setTimeout(() => {
+
+    meteor.remove();
+
+  }, duration * 1000);
+
+}
+
+
+/* 랜덤 별똥별 */
+
+function randomMeteorLoop() {
+
+  createMeteor();
+
+
+  const nextTime =
+
+    5000 +
+    Math.random() * 10000;
+
+
+  setTimeout(
+
+    randomMeteorLoop,
+
+    nextTime
+
+  );
+
+}
+
+
+randomMeteorLoop();
+
+
+/* =========================
+   START APP
+========================= */
+
+function startApp() {
+
+  document
+    .getElementById("tabbar")
+    .style.display =
+    "flex";
+
+
+  movePlane(1);
+
+
+  showPage("searchPage");
+
+
+  setTab(
+    "searchTab"
+  );
+
+}
+
+
+/* =========================
+   SEARCH UNIVERSITY
+========================= */
+
+function searchUniversities() {
+
+  const region =
+
+    document
+      .getElementById("region")
+      .value;
+
+
+  if (
+
+    !selectedField ||
+
+    !selectedType ||
+
+    !region
+
+  ) {
+
+    alert(
+      "여행 조건을 모두 선택해주세요!"
+    );
+
+    return;
+
+  }
+
+
+  const results =
+
+    universities
+
+      .map(uni => {
+
+
+        let score = 0;
+
+
+        if (
+
+          uni.fields.includes(
+            selectedField
+          )
+
+        ) {
+
+          score += 50;
+
+        }
+
+
+        if (
+
+          uni.types.includes(
+            selectedType
+          )
+
+        ) {
+
+          score += 30;
+
+        }
+
+
+        if (
+
+          uni.region === region
+
+        ) {
+
+          score += 20;
+
+        }
+
+
+        return {
+
+          ...uni,
+
+          score
+
+        };
+
+      })
+
+
+      .filter(
+        uni => uni.score > 0
+      )
+
+
+      .sort(
+        (a, b) =>
+          b.score - a.score
+      );
+
+
+  document
+    .getElementById("resultInfo")
+    .textContent =
+
+    `${selectedField} · ${selectedType} · ${region}
+    방향으로 찾아봤어.`;
+
+
+  const list =
+
+    document
+      .getElementById("resultList");
+
+
+  list.innerHTML = "";
+
+
+  results
+    .slice(0, 6)
+    .forEach(uni => {
+
+
+      list.innerHTML += `
+
+<div
+  class="uni-card"
+  onclick="showDetail(${uni.id})"
+>
+
+  <div class="uni-icon">
+
+    ${uni.icon}
+
+  </div>
+
+
+  <div class="uni-main">
+
+    <div class="uni-name">
+
+      ${uni.name}
+
+    </div>
+
+
+    <div class="uni-place">
+
+      📍 ${uni.location}
+
+    </div>
+
+
+    <div class="match">
+
+      ✦ ${uni.score}% MATCH
+
+    </div>
+
+  </div>
+
+</div>
+
+`;
+
+    });
+
+
+  if (
+    results.length === 0
+  ) {
+
+    list.innerHTML = `
+
+<div class="empty">
+
+  아직 이 하늘 아래에서는<br>
+
+  딱 맞는 목적지를 찾지 못했어 ☁️
+
+</div>
+
+`;
+
+  }
+
+
+  movePlane(2);
+
+
+  showPage("resultPage");
+
+}
+
+
+/* =========================
+   DETAIL
+========================= */
+
+function showDetail(id, fromFavorites = false, fromMap = false) {
+
+  detailFromFavorites = fromFavorites;
+  detailFromMap = fromMap;
+
+  // 최근 본 대학을 별자리 기록으로 저장
+  let recent = JSON.parse(localStorage.getItem("uniRecent")) || [];
+  recent = recent.filter(item => item !== id);
+  recent.unshift(id);
+  recent = recent.slice(0, 8);
+  localStorage.setItem("uniRecent", JSON.stringify(recent));
+
+  const uni =
+
+    universities.find(
+
+      uni =>
+        uni.id === id
+
+    );
+
+
+  const favorites =
+
+    JSON.parse(
+
+      localStorage.getItem(
+        "uniFavorites"
+      )
+
+    ) || [];
+
+
+  const saved =
+
+    favorites.includes(id);
+
+
+  document
+    .getElementById("detailContent")
+    .innerHTML = `
+
+<div class="detail">
+
+  <div class="detail-top">
+
+
+    <div class="big-icon">
+
+      ${uni.icon}
+
+    </div>
+
+
+    <div>
+
+      <h2>
+
+        ${uni.name}
+
+      </h2>
+
+
+      <div class="location">
+
+        📍 ${uni.location}
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="detail-section">
+
+    <h4>
+
+      ✦ 발견한 분야
+
+    </h4>
+
+    <p>
+
+      ${uni.fields.join(" · ")}
+
+    </p>
+
+  </div>
+
+
+  <div class="detail-section">
+
+    <h4>
+
+      🧳 지원 가능한 전형
+
+    </h4>
+
+    <p>
+
+      ${uni.types.join(" · ")}
+
+    </p>
+
+  </div>
+
+
+  <div class="detail-section">
+
+    <h4>
+
+      DESTINATION NOTE
+
+    </h4>
+
+    <p>
+
+      ${uni.description}
+
+    </p>
+
+  </div>
+
+
+  <button
+
+    class="save-button
+    ${saved ? "saved" : ""}"
+
+    onclick="toggleFavorite(${uni.id})"
+
+  >
+
+    ${
+
+      saved
+
+        ? "♥ 목적지에 저장됨"
+
+        : "♡ 이곳을 저장하기"
+
+    }
+
+  </button>
+
+
+  <a
+
+    class="homepage"
+
+    href="${uni.website}"
+
+    target="_blank"
+
+  >
+
+    ↗ 공식 홈페이지
+
+  </a>
+
+</div>
+
+`;
+
+
+  movePlane(3);
+
+
+  showPage("detailPage");
+
+}
+
+
+/* =========================
+   FAVORITE
+========================= */
+
+function toggleFavorite(id) {
+
+  let favorites =
+
+    JSON.parse(
+
+      localStorage.getItem(
+        "uniFavorites"
+      )
+
+    ) || [];
+
+
+  if (
+
+    favorites.includes(id)
+
+  ) {
+
+    favorites =
+
+      favorites.filter(
+
+        item =>
+          item !== id
+
+      );
+
+  }
+
+  else {
+
+    favorites.push(id);
+
+  }
+
+
+  localStorage.setItem(
+
+    "uniFavorites",
+
+    JSON.stringify(favorites)
+
+  );
+
+
+  showDetail(id, detailFromFavorites);
+
+}
+
+
+/* =========================
+   OPEN FAVORITES
+========================= */
+
+function openFavorites() {
+
+  const favorites =
+
+    JSON.parse(
+
+      localStorage.getItem(
+        "uniFavorites"
+      )
+
+    ) || [];
+
+
+  const saved =
+
+    universities.filter(
+
+      uni =>
+
+        favorites.includes(
+          uni.id
+        )
+
+    );
+
+
+  const list =
+
+    document
+      .getElementById(
+        "favoriteList"
+      );
+
+
+  list.innerHTML = "";
+
+
+  if (
+
+    saved.length === 0
+
+  ) {
+
+    list.innerHTML = `
+
+<div class="empty">
+
+  아직 여행 지도에<br>
+
+  표시된 목적지가 없어 ✦
+
+  <br><br>
+
+  마음에 드는 대학을 발견하면<br>
+
+  이곳에 하나씩 기록돼.
+
+</div>
+
+`;
+
+  }
+
+  else {
+
+    saved.forEach(uni => {
+
+
+      list.innerHTML += `
+
+<div
+
+  class="uni-card"
+
+  onclick="showDetail(${uni.id}, true)"
+
+>
+
+  <div class="uni-icon">
+
+    ${uni.icon}
+
+  </div>
+
+
+  <div class="uni-main">
+
+    <div class="uni-name">
+
+      ${uni.name}
+
+    </div>
+
+
+    <div class="uni-place">
+
+      📍 ${uni.location}
+
+    </div>
+
+
+    <div class="match">
+
+      ✦ SAVED DESTINATION
+
+    </div>
+
+  </div>
+
+</div>
+
+`;
+
+    });
+
+  }
+
+
+  /* 마지막 목적지 */
+
+  movePlane(4);
+
+
+  /* ★ 여기서 무조건 은하수 페이지 */
+
+  showPage("favoritePage");
+
+
+  setTab(
+    "favoriteTab"
+  );
+
+}
+
+
+/* =========================
+   DETAIL BACK
+========================= */
+
+function goBackFromDetail() {
+
+  if (detailFromMap) {
+
+    openMap();
+
+  } else if (detailFromFavorites) {
+
+    /* 목적지에서 왔다면 은하수가 유지되는 목적지로 돌아가기 */
+    movePlane(4);
+    openFavorites();
+
+  } else {
+
+    backResults();
+
+  }
+
+}
+
+
+/* =========================
+   BACK TO RESULT
+========================= */
+
+function backResults() {
+
+  movePlane(2);
+
+
+  showPage("resultPage");
+
+}
+
+
+/* =========================
+   UNIVERSITY CONSTELLATION
+========================= */
+function renderConstellation() {
+  const recent = JSON.parse(localStorage.getItem("uniRecent")) || [];
+  const ids = recent.filter(id => universities.some(u => u.id === id));
+  const sky = document.getElementById("constellationSky");
+  const empty = document.getElementById("constellationEmpty");
+  sky.innerHTML = "";
+  empty.style.display = ids.length ? "none" : "grid";
+  if (!ids.length) return;
+
+  const positions = [
+    [18,28],[48,18],[76,30],[30,53],[64,58],[18,76],[48,82],[82,74]
+  ];
+  const points=[];
+  ids.forEach((id,index)=>{
+    const uni=universities.find(u=>u.id===id);
+    const [x,y]=positions[index]; points.push([x,y]);
+    const star=document.createElement("button");
+    star.className="constellation-star";
+    star.style.left=x+"%"; star.style.top=y+"%";
+    star.style.setProperty("--twinkle",(2.2+Math.random()*2.2)+"s");
+    star.style.setProperty("--delay",(-Math.random()*2)+"s");
+    star.innerHTML=`<span class="star-dot"></span><span class="star-name">${uni.name}</span>`;
+    star.onclick=()=>showDetail(id,false,true);
+    sky.appendChild(star);
+  });
+  for(let i=1;i<points.length;i++){
+    const [x1,y1]=points[i-1], [x2,y2]=points[i];
+    const dx=x2-x1, dy=y2-y1;
+    const line=document.createElement("div"); line.className="constellation-line";
+    line.style.left=x1+"%"; line.style.top=y1+"%";
+    line.style.width=Math.sqrt(dx*dx+dy*dy)+"%";
+    line.style.transform=`rotate(${Math.atan2(dy,dx)*180/Math.PI}deg)`;
+    sky.appendChild(line);
+  }
+}
+
+/* =========================
+   OPEN MAP
+========================= */
+
+function openMap() {
+
+  detailFromFavorites = false;
+  detailFromMap = false;
+  renderConstellation();
+  movePlane(2);
+  showPage("mapPage");
+  setTab("mapTab");
+
+}
+
+
+/* =========================
+   OPEN SEARCH
+========================= */
+
+function openSearch() {
+
+  movePlane(1);
+
+
+  showPage("searchPage");
+
+
+  setTab(
+    "searchTab"
+  );
+
+}
+
+
+/* =========================
+   TAB
+========================= */
+
+function setTab(id) {
+
+  document
+    .querySelectorAll(".tab")
+    .forEach(tab => {
+
+      tab
+        .classList
+        .remove("active");
+
+    });
+
+
+  document
+    .getElementById(id)
+    .classList
+    .add("active");
+
+}
+
+</script>
+
+</body>
+</html>
