@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>시니어 톡톡 - 키오스크 연습장</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', -apple-system, sans-serif; }
+        body { background-color: #cbd5e1; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+
+        .phone-frame {
+            width: 380px; height: 780px; background: #f1f5f9;
+            border: 12px solid #0f172a; border-radius: 40px;
+            display: flex; flex-direction: column; position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3); overflow: hidden;
+        }
+
+        /* --- 상단 앱 헤더 --- */
+        .app-header {
+            background: #ffffff; padding: 14px 18px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #e2e8f0; z-index: 10; height: 56px;
+        }
+        .header-left { display: flex; align-items: center; gap: 8px; }
+        .back-btn {
+            background: none; border: none; font-size: 20px; font-weight: bold;
+            cursor: pointer; color: #334155; display: none; padding: 0 4px;
+        }
+        .app-logo { font-size: 17px; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 4px; }
+        .app-logo span { color: #3182f6; }
+        .user-point-badge { background: #fef08a; color: #854d0e; font-size: 12px; font-weight: 800; padding: 4px 10px; border-radius: 20px; border: 1px solid #fde047; }
+
+        .content-area { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+        .page { display: none; height: 100%; flex-direction: column; padding: 16px; overflow-y: auto; }
+        .page.active { display: flex; }
+
+        /* --- [1] 메인 화면 --- */
+        .game-status-card {
+            background: #ffffff; border-radius: 24px; padding: 18px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.04); margin-bottom: 14px;
+            border: 2px solid #e2e8f0; position: relative; overflow: hidden;
+        }
+        .status-top { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+        .avatar-box {
+            width: 60px; height: 60px; border-radius: 50%;
+            border: 3px solid #3182f6; box-shadow: 0 4px 8px rgba(49, 130, 246, 0.25);
+            object-fit: cover; animation: bounce 2s infinite;
+        }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+        
+        .user-title { font-size: 12px; font-weight: 700; color: #3182f6; background: #e8f3ff; padding: 2px 8px; border-radius: 6px; display: inline-block; margin-bottom: 4px; }
+        .user-name { font-size: 18px; font-weight: 800; color: #1e293b; }
+
+        .exp-container { background: #f1f5f9; border-radius: 12px; padding: 10px 12px; border: 1px solid #e2e8f0; }
+        .exp-label { display: flex; justify-content: space-between; font-size: 11px; font-weight: 800; color: #64748b; margin-bottom: 6px; }
+        .exp-bar-bg { background: #cbd5e1; height: 12px; border-radius: 6px; overflow: hidden; position: relative; }
+        .exp-bar-fill { background: linear-gradient(90deg, #3182f6, #22c55e); height: 100%; width: 65%; border-radius: 6px; }
+
+        .toss-mission-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white; border-radius: 20px; padding: 16px; margin-bottom: 16px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.2); cursor: pointer; transition: transform 0.1s;
+        }
+        .toss-mission-card:active { transform: scale(0.98); }
+        .mission-info .tag { color: #facc15; font-size: 11px; font-weight: 800; margin-bottom: 2px; display: block; }
+        .mission-info .desc { font-size: 15px; font-weight: 700; }
+        .mission-btn { background: #3182f6; color: white; border: none; font-size: 12px; font-weight: 800; padding: 8px 14px; border-radius: 12px; cursor: pointer; }
+
+        .section-label { font-size: 15px; font-weight: 800; color: #1e293b; margin-bottom: 10px; }
+        .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        
+        .arcade-card {
+            background: #ffffff; border-radius: 20px; padding: 16px 14px;
+            display: flex; flex-direction: column; justify-content: space-between; height: 125px;
+            border: 2px solid #e2e8f0; cursor: pointer; position: relative;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: all 0.15s ease;
+        }
+        .arcade-card:active { transform: scale(0.95); background: #f8fafc; }
+        .arcade-card .badge { position: absolute; top: 12px; right: 12px; background: #ff4d4d; color: white; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 8px; }
+        .arcade-card .icon-box { font-size: 34px; }
+        .arcade-card .title-box { display: flex; justify-content: space-between; align-items: flex-end; }
+        .arcade-card .title { font-size: 15px; font-weight: 800; color: #0f172a; }
+        .arcade-card .reward { font-size: 11px; font-weight: 700; color: #16a34a; }
+
+        /* --- [2] 식당 키오스크 --- */
+        .mcd-header { background: #262626; color: #facc15; padding: 10px; text-align: center; font-weight: 900; font-size: 15px; border-radius: 12px 12px 0 0; }
+        .mcd-nav { display: flex; background: #dc2626; color: white; text-align: center; font-weight: bold; font-size: 12px; }
+        .mcd-nav div { flex: 1; padding: 10px 0; cursor: pointer; }
+        .mcd-nav div.active { border-bottom: 3px solid #facc15; color: #facc15; background: #b91c1c; }
+
+        .mcd-body { background: #f8fafc; border: 1px solid #cbd5e1; border-top: none; padding: 8px; max-height: 200px; overflow-y: auto; }
+        .mcd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .mcd-item { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 8px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+        .mcd-item .img { font-size: 32px; margin: 2px 0; }
+        .mcd-item .title { font-size: 12px; font-weight: bold; color: #1e293b; }
+        .mcd-item .price { font-size: 12px; color: #dc2626; font-weight: 800; margin-bottom: 4px; }
+        .mcd-item .add-btn { background: #facc15; color: #1e293b; border: none; padding: 4px 12px; border-radius: 12px; font-weight: bold; font-size: 11px; cursor: pointer; width: 100%; }
+
+        .cart-box { background: #fff; border: 1px solid #cbd5e1; border-radius: 12px; padding: 10px; margin-top: 8px; flex: 1; display: flex; flex-direction: column; }
+        .cart-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .cart-list { flex: 1; overflow-y: auto; max-height: 70px; }
+        .cart-row { display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-weight: bold; padding: 4px 0; border-bottom: 1px solid #f1f5f9; }
+        .qty-btns button { width: 18px; height: 18px; background: #e2e8f0; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
+
+        .total-banner { background: #1e293b; color: white; border-radius: 8px; padding: 8px 12px; margin-top: 6px; display: flex; justify-content: space-between; font-size: 12px; font-weight: bold; }
+        .total-banner .price { color: #facc15; font-size: 14px; }
+
+        .kiosk-bottom-btns { display: flex; gap: 6px; margin-top: 8px; }
+        .k-btn { flex: 1; padding: 10px 0; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; color: white; }
+
+        /* --- [3] 병원 키오스크 --- */
+        .hospital-card { background: #fff; border-radius: 16px; padding: 16px; border: 2px solid #0284c7; }
+        .hospital-header { color: #0284c7; font-size: 16px; font-weight: 800; text-align: center; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 2px solid #e0f2fe; }
+        .input-display { background: #f0f9ff; border: 1px solid #bae6fd; font-size: 18px; font-weight: bold; text-align: center; padding: 10px; border-radius: 10px; margin-bottom: 10px; letter-spacing: 2px; }
+        .keypad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
+        .key-btn { background: #f8fafc; border: 1px solid #cbd5e1; padding: 12px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; text-align: center; }
+        .key-btn:active { background: #e2e8f0; }
+        .dept-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+        .dept-btn { background: #f0fdf4; border: 1.5px solid #86efac; padding: 12px; border-radius: 10px; font-size: 13px; font-weight: bold; color: #166534; cursor: pointer; text-align: center; }
+        .dept-btn.selected { background: #22c55e; color: white; border-color: #16a34a; }
+
+        /* --- [4] 은행 ATM --- */
+        .atm-card { background: #fff; border-radius: 16px; padding: 16px; border: 2px solid #059669; }
+        .atm-header { background: #059669; color: white; padding: 8px; text-align: center; font-weight: 800; border-radius: 8px; margin-bottom: 12px; }
+        .atm-menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+        .atm-menu-btn { background: #ecfdf5; border: 2px solid #a7f3d0; padding: 14px 10px; border-radius: 12px; font-weight: 800; color: #065f46; text-align: center; cursor: pointer; font-size: 14px; }
+        .atm-menu-btn.active { background: #059669; color: white; }
+
+        /* --- [5] 기차표 예매 --- */
+        .train-card { background: #fff; border-radius: 16px; padding: 16px; border: 2px solid #7c3aed; }
+        .train-header { color: #7c3aed; font-size: 16px; font-weight: 800; text-align: center; margin-bottom: 12px; }
+        .route-box { display: flex; justify-content: space-between; align-items: center; background: #f5f3ff; padding: 12px; border-radius: 12px; margin-bottom: 12px; font-weight: bold; }
+        .route-select { padding: 6px; border-radius: 6px; border: 1px solid #ddd; font-weight: bold; }
+
+        /* --- [6] 내 기록 --- */
+        .record-header { font-size: 17px; font-weight: bold; margin-bottom: 12px; color: #0f172a; }
+        .record-list { display: flex; flex-direction: column; gap: 8px; flex: 1; overflow-y: auto; }
+        .record-item-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; cursor: pointer; }
+        .record-main-info { display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 14px; }
+        .record-detail { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #cbd5e1; font-size: 12px; color: #475569; }
+        .record-item-card.open .record-detail { display: block; }
+
+        /* --- [7] 도움말 & [8] 설정 --- */
+        .info-card { background: white; padding: 16px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 10px; }
+        .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f1f5f9; font-weight: bold; font-size: 14px; }
+
+        /* 하단 네비게이션 */
+        .bottom-bar { height: 58px; border-top: 1px solid #e2e8f0; display: flex; background: #fff; }
+        .tab-btn { flex: 1; background: none; border: none; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #94a3b8; }
+        .tab-btn.active { color: #3182f6; }
+
+        .modal-overlay { display: none; position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 100; }
+        .modal { background: white; padding: 20px; border-radius: 20px; width: 80%; text-align: center; }
+        .modal button { margin-top: 14px; padding: 8px 20px; background: #3182f6; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="phone-frame">
+    <!-- 통합 헤더 -->
+    <div class="app-header">
+        <div class="header-left">
+            <button id="back-btn" class="back-btn" onclick="goBack()">←</button>
+            <div class="app-logo"><span>시니어 톡톡</span> 키오스크</div>
+        </div>
+        <div class="user-point-badge" id="user-points">⭐ 350P</div>
+    </div>
+
+    <div class="content-area">
+        <!-- [1] 메인 화면 -->
+        <div id="page-home" class="page active">
+            <div class="game-status-card">
+                <div class="status-top">
+                    <img src="코토미네.jpg" class="avatar-box" alt="프로필 사진">
+                    <div>
+                        <span class="user-title">Lv.3 연습 마스터</span>
+                        <div class="user-name" id="display-username">길가메쉬 어르신</div>
+                    </div>
+                </div>
+                <div class="exp-container">
+                    <div class="exp-label">
+                        <span>다음 레벨까지</span>
+                        <span id="exp-text">65 / 100 EXP</span>
+                    </div>
+                    <div class="exp-bar-bg">
+                        <div class="exp-bar-fill" id="exp-bar" style="width: 65%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="toss-mission-card" onclick="goPage('kiosk')">
+                <div class="mission-info">
+                    <span class="tag">⚡ 오늘 완료 시 +50P</span>
+                    <div class="desc">맥도날드에서 버거 주문해보기</div>
+                </div>
+                <button class="mission-btn">도전하기</button>
+            </div>
+
+            <div class="section-label">연습 스테이지 선택</div>
+            <div class="game-grid">
+                <div class="arcade-card" onclick="goPage('kiosk')">
+                    <span class="badge">BEST</span>
+                    <div class="icon-box">🍔</div>
+                    <div class="title-box">
+                        <span class="title">패스트푸드</span>
+                        <span class="reward">+50P</span>
+                    </div>
+                </div>
+                <div class="arcade-card" onclick="goPage('hospital')">
+                    <div class="icon-box">🏥</div>
+                    <div class="title-box">
+                        <span class="title">병원 접수</span>
+                        <span class="reward">+50P</span>
+                    </div>
+                </div>
+                <div class="arcade-card" onclick="goPage('atm')">
+                    <div class="icon-box">🏦</div>
+                    <div class="title-box">
+                        <span class="title">은행 ATM</span>
+                        <span class="reward">+50P</span>
+                    </div>
+                </div>
+                <div class="arcade-card" onclick="goPage('train')">
+                    <div class="icon-box">🎫</div>
+                    <div class="title-box">
+                        <span class="title">기차표 예매</span>
+                        <span class="reward">+50P</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- [2] 패스트푸드 키오스크 -->
+        <div id="page-kiosk" class="page">
+            <div class="mcd-header">McDonald's 주문하기</div>
+            <div class="mcd-nav">
+                <div class="active">추천메뉴</div>
+                <div>버거</div>
+                <div>사이드</div>
+                <div>음료</div>
+            </div>
+            
+            <div class="mcd-body">
+                <div class="mcd-grid">
+                    <div class="mcd-item">
+                        <span class="img">🍔</span>
+                        <span class="title">불고기 버거</span>
+                        <span class="price">3,000원</span>
+                        <button class="add-btn" onclick="addToCart('불고기 버거', 3000)">+ 담기</button>
+                    </div>
+                    <div class="mcd-item">
+                        <span class="img">🍔🥤</span>
+                        <span class="title">빅맥 세트</span>
+                        <span class="price">6,500원</span>
+                        <button class="add-btn" onclick="addToCart('빅맥 세트', 6500)">+ 담기</button>
+                    </div>
+                    <div class="mcd-item">
+                        <span class="img">🍟</span>
+                        <span class="title">후렌치 후라이</span>
+                        <span class="price">2,000원</span>
+                        <button class="add-btn" onclick="addToCart('후렌치 후라이', 2000)">+ 담기</button>
+                    </div>
+                    <div class="mcd-item">
+                        <span class="img">🥤</span>
+                        <span class="title">코카콜라</span>
+                        <span class="price">1,700원</span>
+                        <button class="add-btn" onclick="addToCart('코카콜라', 1700)">+ 담기</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cart-box">
+                <div class="cart-top">
+                    <span style="font-size: 11px; font-weight: bold; color: #475569;">🛒 선택한 주문 내역</span>
+                    <button style="font-size: 10px; color: #ef4444; border: none; background: none; cursor: pointer; font-weight: bold;" onclick="clearCart()">전체취소</button>
+                </div>
+                <div class="cart-list" id="cart-list">
+                    <div style="font-size: 11px; color: #94a3b8; text-align: center; margin-top: 10px;">메뉴를 누르면 담깁니다.</div>
+                </div>
+                <div class="total-banner">
+                    <span>수량: <span id="cart-qty" style="color: #facc15;">0</span>개</span>
+                    <span>합계: <span id="cart-total" class="price">0원</span></span>
+                </div>
+            </div>
+
+            <div class="kiosk-bottom-btns">
+                <button class="k-btn" style="background: #64748b;" onclick="clearCart()">취소하기</button>
+                <button class="k-btn" style="background: #16a34a;" onclick="completeOrder('식당 주문하기')">주문 완료</button>
+            </div>
+        </div>
+
+        <!-- [3] 병원 접수 키오스크 -->
+        <div id="page-hospital" class="page">
+            <div class="hospital-card">
+                <div class="hospital-header">🏥 메디컬 병원 자동 접수</div>
+                <div style="font-size: 12px; font-weight: bold; color: #0284c7; margin-bottom: 6px;">1. 생년월일 6자리를 입력하세요.</div>
+                <div class="input-display" id="hosp-input">______</div>
+                <div class="keypad-grid">
+                    <button class="key-btn" onclick="appendHosp('1')">1</button>
+                    <button class="key-btn" onclick="appendHosp('2')">2</button>
+                    <button class="key-btn" onclick="appendHosp('3')">3</button>
+                    <button class="key-btn" onclick="appendHosp('4')">4</button>
+                    <button class="key-btn" onclick="appendHosp('5')">5</button>
+                    <button class="key-btn" onclick="appendHosp('6')">6</button>
+                    <button class="key-btn" onclick="appendHosp('7')">7</button>
+                    <button class="key-btn" onclick="appendHosp('8')">8</button>
+                    <button class="key-btn" onclick="appendHosp('9')">9</button>
+                    <button class="key-btn" style="color:#ef4444;" onclick="clearHosp()">C</button>
+                    <button class="key-btn" onclick="appendHosp('0')">0</button>
+                    <button class="key-btn" style="color:#0284c7;" onclick="popHosp()">←</button>
+                </div>
+                
+                <div style="font-size: 12px; font-weight: bold; color: #0284c7; margin: 10px 0 6px;">2. 진료과를 선택하세요.</div>
+                <div class="dept-grid">
+                    <div class="dept-btn" onclick="selectDept(this, '내과')">🩺 내과</div>
+                    <div class="dept-btn" onclick="selectDept(this, '안과')">👁️ 안과</div>
+                    <div class="dept-btn" onclick="selectDept(this, '정형외과')">🦴 정형외과</div>
+                    <div class="dept-btn" onclick="selectDept(this, '이비인후과')">👂 이비인후과</div>
+                </div>
+
+                <button class="k-btn" style="background: #0284c7; width: 100%; margin-top: 14px;" onclick="completeHospital()">접수증 출력하기</button>
+            </div>
+        </div>
+
+        <!-- [4] 은행 ATM -->
+        <div id="page-atm" class="page">
+            <div class="atm-card">
+                <div class="atm-header">🏦 행복은행 스마트 ATM</div>
+                <div style="font-size: 12px; font-weight: bold; color: #047857; margin-bottom: 8px;">원하시는 거래를 선택하세요.</div>
+                <div class="atm-menu-grid">
+                    <div class="atm-menu-btn active" onclick="selectAtmType(this, '입금')">💵 입금</div>
+                    <div class="atm-menu-btn" onclick="selectAtmType(this, '출금')">🏧 출금</div>
+                    <div class="atm-menu-btn" onclick="selectAtmType(this, '송금')">📲 계좌 이체</div>
+                    <div class="atm-menu-btn" onclick="selectAtmType(this, '통장정리')">📖 통장 정리</div>
+                </div>
+
+                <div style="font-size: 12px; font-weight: bold; color: #047857; margin-bottom: 6px;">거래 금액 입력</div>
+                <div class="input-display" style="background:#ecfdf5; border-color:#a7f3d0; color:#065f46;" id="atm-amount">0 원</div>
+                <div class="keypad-grid">
+                    <button class="key-btn" onclick="addAtmMoney(10000)">+1만</button>
+                    <button class="key-btn" onclick="addAtmMoney(50000)">+5만</button>
+                    <button class="key-btn" onclick="addAtmMoney(100000)">+10만</button>
+                </div>
+                <button class="key-btn" style="width:100%; margin-bottom:12px; color:#ef4444;" onclick="clearAtm()">금액 초기화</button>
+
+                <button class="k-btn" style="background: #059669; width: 100%;" onclick="completeAtm()">거래 완료</button>
+            </div>
+        </div>
+
+        <!-- [5] 기차표 예매 -->
+        <div id="page-train" class="page">
+            <div class="train-card">
+                <div class="train-header">🎫 KORAIL 승차권 예매</div>
+                <div class="route-box">
+                    <select class="route-select" id="train-start">
+                        <option>서울</option>
+                        <option>수원</option>
+                        <option>대전</option>
+                    </select>
+                    <span>➡️</span>
+                    <select class="route-select" id="train-end">
+                        <option>부산</option>
+                        <option>동대구</option>
+                        <option>광주송정</option>
+                    </select>
+                </div>
+
+                <div style="font-size: 12px; font-weight: bold; color: #6d28d9; margin-bottom: 6px;">승차인원 선택</div>
+                <div style="display:flex; justify-content:space-between; align-items:center; background:#f5f3ff; padding:10px; border-radius:10px; margin-bottom:12px;">
+                    <span style="font-size:13px; font-weight:bold;">어른 (만 13세 이상)</span>
+                    <div class="qty-btns" style="display:flex; gap:8px; align-items:center;">
+                        <button onclick="changeTrainQty(-1)">-</button>
+                        <span id="train-qty" style="font-weight:bold;">1</span>
+                        <button onclick="changeTrainQty(1)">+</button>
+                    </div>
+                </div>
+
+                <div style="font-size: 12px; font-weight: bold; color: #6d28d9; margin-bottom: 6px;">좌석 등급</div>
+                <div style="display:flex; gap:8px; margin-bottom:14px;">
+                    <button class="dept-btn selected" id="seat-normal" style="flex:1;" onclick="selectSeat('일반석')">일반석 (59,800원)</button>
+                    <button class="dept-btn" id="seat-vip" style="flex:1;" onclick="selectSeat('특실')">특실 (83,700원)</button>
+                </div>
+
+                <button class="k-btn" style="background: #7c3aed; width: 100%;" onclick="completeTrain()">승차권 예매하기</button>
+            </div>
+        </div>
+
+        <!-- [6] 내 기록 보기 -->
+        <div id="page-record" class="page">
+            <div class="record-header">내 연습 기록</div>
+            <div style="font-size: 11px; color: #64748b; margin-bottom: 8px;">👇 카드를 누르면 상세 내역을 볼 수 있습니다.</div>
+            <div class="record-list" id="record-list-box"></div>
+        </div>
+
+        <!-- [7] 도움말 페이지 -->
+        <div id="page-help" class="page">
+            <div class="record-header">❓ 이용 도움말</div>
+            <div class="info-card">
+                <h4 style="color:#3182f6; margin-bottom:6px;">1. 스테이지 선택하기</h4>
+                <p style="font-size:12px; color:#475569;">메인 화면에서 버거, 병원, 은행, 기차표 중 연습하고 싶은 키오스크를 클릭하세요.</p>
+            </div>
+            <div class="info-card">
+                <h4 style="color:#3182f6; margin-bottom:6px;">2. 키오스크 터치 연습</h4>
+                <p style="font-size:12px; color:#475569;">실제 매장과 동일한 방식으로 원하는 항목을 터치하여 담고 결제를 진행합니다.</p>
+            </div>
+            <div class="info-card">
+                <h4 style="color:#3182f6; margin-bottom:6px;">3. 뒤로 가기</h4>
+                <p style="font-size:12px; color:#475569;">상단 왼쪽의 [←] 화살표 버튼을 언제든 누르면 이전 화면으로 돌아갑니다.</p>
+            </div>
+        </div>
+
+        <!-- [8] 설정 페이지 -->
+        <div id="page-setting" class="page">
+            <div class="record-header">⚙️ 앱 설정</div>
+            <div class="info-card">
+                <div class="setting-row">
+                    <span>사용자 이름</span>
+                    <button style="border:none; background:#e2e8f0; padding:4px 8px; border-radius:6px; cursor:pointer;" onclick="changeName()">수정</button>
+                </div>
+                <div class="setting-row">
+                    <span>글자 크기</span>
+                    <span style="color:#3182f6;">크게 (기본)</span>
+                </div>
+                <div class="setting-row">
+                    <span>터치 효과음</span>
+                    <span style="color:#16a34a;">켜짐 🔊</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 하단 네비게이션 -->
+    <div class="bottom-bar">
+        <button id="tab-home" class="tab-btn active" onclick="goPage('home')">🏠</button>
+        <button id="tab-record" class="tab-btn" onclick="goPage('record')">☑️</button>
+        <button id="tab-help" class="tab-btn" onclick="goPage('help')">❓</button>
+        <button id="tab-setting" class="tab-btn" onclick="goPage('setting')">⚙️</button>
+    </div>
+
+    <!-- 통용 모달 팝업 -->
+    <div class="modal-overlay" id="order-modal">
+        <div class="modal">
+            <h3 style="color: #1e293b; margin-bottom: 6px;" id="modal-title">🎉 미션 성공!</h3>
+            <p style="font-size: 13px; color: #64748b; margin-bottom: 4px;" id="modal-desc">연습 완료 (+50P 획득)</p>
+            <button onclick="closeModal()">확인</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentPoints = 350;
+    let currentExp = 65;
+    let pageHistory = ['home'];
+    
+    // 식당 키오스크 상태 변수
+    let cart = [];
+    
+    // 병원 키오스크 상태 변수
+    let hospInput = '';
+    let selectedDept = '';
+
+    // ATM 상태 변수
+    let atmType = '입금';
+    let atmMoney = 0;
+
+    // 기차표 상태 변수
+    let trainQty = 1;
+    let seatType = '일반석';
+
+    // 내 기록 데이터
+    let records = [
+        {
+            date: '2026-09-10',
+            title: '🍔 식당 주문하기',
+            status: '성공 👍',
+            statusColor: '#16a34a',
+            items: [{ name: '불고기 버거', qty: 1, price: 3000 }, { name: '코카콜라', qty: 1, price: 1700 }],
+            total: 4700
+        }
+    ];
+
+    // 페이지 전환 및 네비게이션
+    function goPage(pageId, isBack = false) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+        const targetPage = document.getElementById('page-' + pageId);
+        if (targetPage) targetPage.classList.add('active');
+
+        const backBtn = document.getElementById('back-btn');
+        if (pageId === 'home') {
+            backBtn.style.display = 'none';
+            document.getElementById('tab-home').classList.add('active');
+            if (!isBack) pageHistory = ['home'];
+        } else {
+            backBtn.style.display = 'inline-block';
+            if (!isBack) pageHistory.push(pageId);
+            
+            if (pageId === 'record') document.getElementById('tab-record').classList.add('active');
+            if (pageId === 'help') document.getElementById('tab-help').classList.add('active');
+            if (pageId === 'setting') document.getElementById('tab-setting').classList.add('active');
+        }
+
+        if (pageId === 'record') renderRecords();
+    }
+
+    function goBack() {
+        if (pageHistory.length > 1) {
+            pageHistory.pop();
+            const prevPage = pageHistory[pageHistory.length - 1];
+            goPage(prevPage, true);
+        } else {
+            goPage('home', true);
+        }
+    }
+
+    // 경험치 및 포인트 추가 로직
+    function addRewards(expGain = 15, pointGain = 50) {
+        currentPoints += pointGain;
+        currentExp += expGain;
+
+        if (currentExp >= 100) {
+            currentExp -= 100;
+            alert('🎉 축하합니다! 레벨업 하셨습니다!');
+        }
+
+        document.getElementById('user-points').innerText = `⭐ ${currentPoints}P`;
+        document.getElementById('exp-text').innerText = `${currentExp} / 100 EXP`;
+        document.getElementById('exp-bar').style.width = `${currentExp}%`;
+    }
+
+    /* --- [1] 식당 키오스크 스크립트 --- */
+    function addToCart(name, price) {
+        const existing = cart.find(item => item.name === name);
+        if (existing) { existing.qty += 1; } 
+        else { cart.push({ name, price, qty: 1 }); }
+        updateCartUI();
+    }
+
+    function changeQty(index, delta) {
+        cart[index].qty += delta;
+        if (cart[index].qty <= 0) cart.splice(index, 1);
+        updateCartUI();
+    }
+
+    function clearCart() { cart = []; updateCartUI(); }
+
+    function updateCartUI() {
+        const listEl = document.getElementById('cart-list');
+        const qtyEl = document.getElementById('cart-qty');
+        const totalEl = document.getElementById('cart-total');
+
+        if (cart.length === 0) {
+            listEl.innerHTML = '<div style="font-size: 11px; color: #94a3b8; text-align: center; margin-top: 10px;">메뉴를 누르면 담깁니다.</div>';
+            qtyEl.innerText = '0';
+            totalEl.innerText = '0원';
+            return;
+        }
+
+        let html = ''; let totalQty = 0; let totalPrice = 0;
+        cart.forEach((item, idx) => {
+            totalQty += item.qty; totalPrice += item.price * item.qty;
+            html += `<div class="cart-row">
+                <span>${item.name}</span>
+                <div class="qty-btns" style="display:flex; align-items:center; gap:6px;">
+                    <button onclick="changeQty(${idx}, -1)">-</button>
+                    <span>${item.qty}</span>
+                    <button onclick="changeQty(${idx}, 1)">+</button>
+                    <span style="margin-left:4px; color:#dc2626;">${(item.price * item.qty).toLocaleString()}원</span>
+                </div>
+            </div>`;
+        });
+        listEl.innerHTML = html; qtyEl.innerText = totalQty; totalEl.innerText = totalPrice.toLocaleString() + '원';
+    }
+
+    function completeOrder(title) {
+        if (cart.length === 0) return alert('메뉴를 먼저 선택해 주세요!');
+        const totalSum = cart.reduce((acc, cur) => acc + (cur.price * cur.qty), 0);
+        
+        saveRecord(title, cart, totalSum);
+        showModal('🎉 주문 성공!', '패스트푸드 연습을 완수했습니다 (+50P)');
+        clearCart();
+    }
+
+    /* --- [2] 병원 키오스크 스크립트 --- */
+    function appendHosp(num) {
+        if (hospInput.length < 6) { hospInput += num; updateHospUI(); }
+    }
+    function popHosp() { hospInput = hospInput.slice(0, -1); updateHospUI(); }
+    function clearHosp() { hospInput = ''; updateHospUI(); }
+    function updateHospUI() {
+        document.getElementById('hosp-input').innerText = hospInput.padEnd(6, '_');
+    }
+    function selectDept(el, dept) {
+        document.querySelectorAll('.dept-btn').forEach(b => b.classList.remove('selected'));
+        el.classList.add('selected');
+        selectedDept = dept;
+    }
+    function completeHospital() {
+        if (hospInput.length < 6) return alert('생년월일 6자리를 완전히 입력하세요.');
+        if (!selectedDept) return alert('진료과를 선택해주세요.');
+
+        const items = [{ name: `진료 접수 (${selectedDept})`, qty: 1, price: 5200 }];
+        saveRecord('🏥 병원 접수하기', items, 5200);
+        showModal('🏥 접수 완수!', `${selectedDept} 접수증이 출력되었습니다. (+50P)`);
+        clearHosp();
+    }
+
+    /* --- [3] 은행 ATM 스크립트 --- */
+    function selectAtmType(el, type) {
+        document.querySelectorAll('.atm-menu-btn').forEach(b => b.classList.remove('active'));
+        el.classList.add('active');
+        atmType = type;
+    }
+    function addAtmMoney(amount) { atmMoney += amount; updateAtmUI(); }
+    function clearAtm() { atmMoney = 0; updateAtmUI(); }
+    function updateAtmUI() {
+        document.getElementById('atm-amount').innerText = `${atmMoney.toLocaleString()} 원`;
+    }
+    function completeAtm() {
+        if (atmMoney === 0 && atmType !== '통장정리') return alert('거래하실 금액을 입력해주세요.');
+
+        const items = [{ name: `ATM ${atmType}`, qty: 1, price: atmMoney }];
+        saveRecord(`🏦 ATM ${atmType}`, items, atmMoney);
+        showModal('🏦 거래 완료!', `성공적으로 ${atmType} 거래가 처리되었습니다. (+50P)`);
+        clearAtm();
+    }
+
+    /* --- [4] 기차표 예매 스크립트 --- */
+    function changeTrainQty(delta) {
+        if (trainQty + delta >= 1) {
+            trainQty += delta;
+            document.getElementById('train-qty').innerText = trainQty;
+        }
+    }
+    function selectSeat(type) {
+        seatType = type;
+        if (type === '일반석') {
+            document.getElementById('seat-normal').classList.add('selected');
+            document.getElementById('seat-vip').classList.remove('selected');
+        } else {
+            document.getElementById('seat-vip').classList.add('selected');
+            document.getElementById('seat-normal').classList.remove('selected');
+        }
+    }
+    function completeTrain() {
+        const start = document.getElementById('train-start').value;
+        const end = document.getElementById('train-end').value;
+        if (start === end) return alert('출발지와 목적지가 같을 수 없습니다.');
+
+        const unitPrice = seatType === '일반석' ? 59800 : 83700;
+        const total = unitPrice * trainQty;
+        const items = [{ name: `${start}➔${end} (${seatType})`, qty: trainQty, price: unitPrice }];
+
+        saveRecord('🎫 KTX 기차표 예매', items, total);
+        showModal('🎫 발권 완료!', `${start}발 ${end}행 승차권 예매 완료! (+50P)`);
+    }
+
+    /* --- 내 기록 공통 저장 함수 --- */
+    function saveRecord(title, items, total) {
+        const today = new Date().toISOString().split('T')[0];
+        records.unshift({
+            date: today,
+            title: title,
+            status: '성공 👍',
+            statusColor: '#16a34a',
+            items: JSON.parse(JSON.stringify(items)),
+            total: total
+        });
+        addRewards();
+    }
+
+    function renderRecords() {
+        const box = document.getElementById('record-list-box');
+        box.innerHTML = '';
+
+        records.forEach((r) => {
+            const card = document.createElement('div');
+            card.className = 'record-item-card';
+            card.onclick = () => card.classList.toggle('open');
+
+            let itemsDetailHtml = '';
+            r.items.forEach(item => {
+                itemsDetailHtml += `<div style="display:flex; justify-content:space-between; margin-bottom:2px;">
+                    <span>• ${item.name} x ${item.qty}</span>
+                    <span>${(item.price * item.qty).toLocaleString()}원</span>
+                </div>`;
+            });
+
+            card.innerHTML = `
+                <div class="record-main-info">
+                    <div>
+                        <div style="font-size:11px; color:#94a3b8;">${r.date}</div>
+                        <div>${r.title}</div>
+                    </div>
+                    <span style="color:${r.statusColor};">${r.status}</span>
+                </div>
+                <div class="record-detail">
+                    <div style="font-weight:bold; margin-bottom:4px; color:#1e293b;">상세 내역:</div>
+                    ${itemsDetailHtml}
+                    <div style="text-align:right; font-weight:bold; color:#dc2626; margin-top:6px;">총 이용금액: ${r.total.toLocaleString()}원</div>
+                </div>
+            `;
+            box.appendChild(card);
+        });
+    }
+
+    /* --- 설정 기능 --- */
+    function changeName() {
+        const newName = prompt('새로운 사용자 이름을 입력하세요:', '김정숙 어르신');
+        if (newName) {
+            document.getElementById('display-username').innerText = newName;
+            alert('이름이 변경되었습니다!');
+        }
+    }
+
+    /* --- 모달 제어 --- */
+    function showModal(title, desc) {
+        document.getElementById('modal-title').innerText = title;
+        document.getElementById('modal-desc').innerText = desc;
+        document.getElementById('order-modal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('order-modal').style.display = 'none';
+        goPage('home');
+    }
+
+    renderRecords();
+</script>
+
+</body>
+</html>
