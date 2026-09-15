@@ -120,14 +120,14 @@
             to { background-color: rgba(255, 140, 0, 0.95); }
         }
 
-        /* 🏆 결과 화면 (게임오버 모달) */
+        /* 🏆 결과 화면 (엔딩 모달) */
         .gameover-overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.75);
+            background: rgba(0, 0, 0, 0.8);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -138,23 +138,64 @@
             background: #fffde7;
             border: 4px solid #8d6e63;
             border-radius: 24px;
-            padding: 25px 20px;
+            padding: 20px 16px;
             text-align: center;
-            width: 80%;
+            width: 85%;
             box-shadow: 0 8px 0 #5d4037;
+            max-height: 90%;
+            overflow-y: auto;
         }
 
         .gameover-box h2 {
-            margin: 0 0 10px 0;
+            margin: 0 0 5px 0;
             color: #d32f2f;
-            font-size: 26px;
+            font-size: 22px;
+        }
+
+        .ending-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #e65100;
+            margin: 6px 0;
+        }
+
+        /* 🖼️ 정사각형 고정 스타일 */
+        .ending-img-box {
+            width: 100%;
+            max-width: 200px;
+            aspect-ratio: 1 / 1; /* 1:1 정사각형 고정 */
+            border-radius: 12px;
+            border: 2px solid #8d6e63;
+            overflow: hidden;
+            margin: 10px auto;
+            background: #efebe9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ending-img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 찌그러짐 없이 정사각형 비율 유지 */
+        }
+
+        .ending-desc {
+            font-size: 13px;
+            color: #4e342e;
+            background: #ffffff;
+            border: 1px solid #d7ccc8;
+            border-radius: 10px;
+            padding: 8px;
+            margin: 8px 0;
+            word-break: keep-all;
         }
 
         .final-score {
-            font-size: 38px;
+            font-size: 32px;
             font-weight: bold;
-            color: #4e342e;
-            margin: 12px 0;
+            color: #3e2723;
+            margin: 5px 0;
         }
 
         /* 메인 화면 일러스트 박스 */
@@ -235,7 +276,7 @@
             overflow: hidden;
         }
 
-        /* 🦝 디테일 리얼 라쿤 손 스타일 & 애니메이션 */
+        /* 🦝 디테일 리얼 라쿤 손 스타일 */
         .raccoon-paw {
             position: absolute;
             bottom: -20px;
@@ -256,7 +297,6 @@
             transform: rotate(-22deg) scaleX(-1);
         }
 
-        /* 낚아채는 동작 애니메이션 */
         .paw-left.grab {
             animation: grabLeft 0.16s ease-out;
         }
@@ -277,7 +317,6 @@
             100% { transform: rotate(-22deg) scaleX(-1) translate(0, 0); }
         }
 
-        /* 🍎 클릭 시 음식 요동 효과 */
         .hit-animation {
             animation: hitJiggle 0.15s ease-in-out;
         }
@@ -290,7 +329,6 @@
             100% { transform: scale(1) rotate(0deg); }
         }
 
-        /* 먹기 진행 점 */
         .eat-dots {
             display: flex;
             justify-content: center;
@@ -310,7 +348,6 @@
             background-color: #ff9800;
         }
 
-        /* 3열 도감 그리드 */
         .book-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -345,18 +382,41 @@
 
     <div class="mobile-frame">
 
-        <!-- 💥 화면 전체 폭발 오버레이 -->
+        <!-- 💥 폭발 오버레이 -->
         <div id="explosion-overlay" class="explosion-overlay hidden">
             <div class="explosion-text">펑!</div>
         </div>
 
-        <!-- 🏆 게임 오버 점수 모달 -->
+        <!-- 🤫 비밀 'E'키 선택 창 모달 (아무도 모르는 치트 메뉴) -->
+        <div id="secret-modal" class="gameover-overlay hidden" style="z-index: 1000;">
+            <div class="gameover-box" style="max-width: 280px;">
+                <h3 style="margin-top:0;">엔딩 </h3>
+                <div class="btn-group" style="flex-direction: column; gap: 8px;">
+                    <button onclick="triggerSecretEnding('ending1')">A. 폭발 (엔딩 1)</button>
+                    <button onclick="triggerSecretEnding('ending2')">B. 최고! (엔딩 2)</button>
+                    <button onclick="triggerSecretEnding('ending3')">C. 돼지괴물라쿤 (엔딩 3)</button>
+                    <button onclick="closeSecretModal()" style="background:#e0e0e0; box-shadow:none;">닫기</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🏆 엔딩 결과 화면 모달 -->
         <div id="gameover-overlay" class="gameover-overlay hidden">
             <div class="gameover-box">
-                <h2>⏰ TIME OVER!</h2>
-                <p style="font-size: 16px; color: #5d4037; font-weight: bold;">최종 점수</p>
+                <h2>⏰ GAME OVER!</h2>
+                <div id="ending-title" class="ending-title">엔딩 제목</div>
+                
+                <!-- 🖼️ 1:1 정사각형 적용 영역 -->
+                <div class="ending-img-box">
+                    <img id="ending-img" src="ending1.jpg" alt="엔딩 이미지" onerror="this.alt='📸 이미지 파일 없음'">
+                </div>
+
+                <div id="ending-desc" class="ending-desc">엔딩 설명 텍스트</div>
+                
+                <p style="font-size: 13px; color: #8d6e63; font-weight: bold; margin-bottom: 0;">최종 점수</p>
                 <div id="final-score" class="final-score">0점</div>
-                <div class="btn-group" style="margin-top: 15px;">
+                
+                <div class="btn-group" style="margin-top: 10px;">
                     <button onclick="hideGameOver(); startGame();">다시하기</button>
                     <button onclick="hideGameOver(); showScreen('main-screen');">메인으로</button>
                 </div>
@@ -366,14 +426,14 @@
         <!-- 1. 메인 화면 -->
         <div id="main-screen" class="screen">
             <div>
-                <h1>라쿤 뷔페</h1>
-                <p>라쿤 드가자</p>
+                <h1>🦝 라쿤 뷔페</h1>
+                <p>지구를 구하는 폭풍 흡입!</p>
             </div>
 
             <div class="illustration-box">
                 <img src="background.jpg" alt="배경" class="bg-img" onerror="this.style.display='none'">
                 <div class="character-overlay">
-                    <div class="speech-bubble">어서옵쇼</div><br>
+                    <div class="speech-bubble">어서옵쇼! 🌿</div><br>
                     <img src="racoon_1.jpg" alt="라쿤 캐릭터" width="120" onerror="this.alt='🦝 (라쿤)'">
                 </div>
             </div>
@@ -391,13 +451,10 @@
         <div id="info-screen" class="screen hidden">
             <div>
                 <h1>📜 게임 설명</h1>
-                
                 <div class="info-content-box">
                     <p style="text-align: left;"><b>🌱 기획 배경 및 컨셉</b></p>
                     <p style="text-align: left; font-size: 13px;">진짜 라쿤의 섬세한 앞발을 이용해 끊임없이 먹어치우세요!</p>
-                    
                     <hr style="border: 0.5px dashed #d7ccc8; margin: 10px 0;">
-                    
                     <p style="text-align: left;"><b>🎮 상세 조작 방법</b></p>
                     <p style="text-align: left; font-size: 13px;"><b>1. 제한시간:</b> 기본 <b>30.0초</b>가 부여됩니다.</p>
                     <p style="text-align: left; font-size: 13px;"><b>2. 음식 먹기:</b> 음식을 연속 <b>4번 탭</b>해야 완전히 섭취! (+0.5초)</p>
@@ -421,10 +478,7 @@
                 </div>
             </div>
 
-            <!-- 🐾 리얼 라쿤 손 포지셔닝 영역 -->
             <div class="game-card-wrapper">
-                
-                <!-- 🐾 왼쪽 리얼 라쿤 손 -->
                 <div id="paw-left" class="raccoon-paw paw-left">
                     <svg viewBox="0 0 200 260" width="100%" height="100%">
                         <defs>
@@ -445,53 +499,18 @@
                             </linearGradient>
                         </defs>
                         <g>
-                            <!-- 팔 / 팔목 털 -->
                             <path d="M 40 260 L 45 180 Q 50 150 70 140 Q 130 140 155 180 L 160 260 Z" fill="url(#lArmFur)" />
                             <path d="M 38 220 Q 25 210 35 195 Q 20 185 40 175 Q 30 160 50 155 Q 55 140 70 140 Q 90 135 110 140 Q 130 135 145 150 Q 165 155 155 175 Q 175 185 160 200 L 160 260 L 40 260 Z" fill="#292524" />
-                            <!-- 손바닥/손등 베이스 -->
                             <path d="M 60 150 C 50 120 60 90 80 90 C 100 90 110 90 130 90 C 150 90 160 120 150 150 C 140 170 70 170 60 150 Z" fill="url(#lFingerGrad)" />
-
-                            <!-- 1번 엄지 손가락 및 발톱 -->
-                            <g>
-                                <path d="M 32 105 Q 20 90 15 75 Q 25 82 36 92 Z" fill="url(#lClawGrad)" />
-                                <path d="M 62 135 Q 40 125 32 105 C 30 95 40 90 48 100 Q 58 115 70 125 Z" fill="url(#lFingerGrad)" stroke="#18181b" stroke-width="1.5" />
-                            </g>
-                            <!-- 2번 검지 손가락 및 발톱 -->
-                            <g>
-                                <path d="M 58 45 Q 52 22 45 5 Q 56 18 64 35 Z" fill="url(#lClawGrad)" />
-                                <path d="M 75 105 Q 65 70 58 45 C 56 35 68 32 72 42 Q 80 70 85 102 Z" fill="url(#lFingerGrad)" stroke="#18181b" stroke-width="1.5" />
-                                <path d="M 64 68 Q 70 71 76 69" stroke="#52525b" stroke-width="1.5" fill="none" />
-                                <path d="M 68 88 Q 74 91 80 89" stroke="#52525b" stroke-width="1.5" fill="none" />
-                            </g>
-                            <!-- 3번 중지 손가락 및 발톱 -->
-                            <g>
-                                <path d="M 98 35 Q 98 10 95 -8 Q 104 8 104 28 Z" fill="url(#lClawGrad)" />
-                                <path d="M 90 98 Q 92 60 98 35 C 98 24 108 24 108 35 Q 106 60 102 98 Z" fill="url(#lFingerGrad)" stroke="#18181b" stroke-width="1.5" />
-                                <path d="M 94 58 Q 100 60 105 58" stroke="#52525b" stroke-width="1.5" fill="none" />
-                                <path d="M 92 80 Q 98 82 104 80" stroke="#52525b" stroke-width="1.5" fill="none" />
-                            </g>
-                            <!-- 4번 약지 손가락 및 발톱 -->
-                            <g>
-                                <path d="M 136 48 Q 145 25 152 8 Q 143 22 132 38 Z" fill="url(#lClawGrad)" />
-                                <path d="M 110 102 Q 120 70 136 48 C 140 38 150 42 144 52 Q 130 75 120 105 Z" fill="url(#lFingerGrad)" stroke="#18181b" stroke-width="1.5" />
-                                <path d="M 122 70 Q 128 72 134 69" stroke="#52525b" stroke-width="1.5" fill="none" />
-                                <path d="M 116 89 Q 122 91 128 88" stroke="#52525b" stroke-width="1.5" fill="none" />
-                            </g>
-                            <!-- 5번 새끼 손가락 및 발톱 -->
-                            <g>
-                                <path d="M 162 110 Q 178 96 188 82 Q 175 90 160 100 Z" fill="url(#lClawGrad)" />
-                                <path d="M 125 128 Q 148 118 162 110 C 170 102 178 112 168 120 Q 150 132 132 138 Z" fill="url(#lFingerGrad)" stroke="#18181b" stroke-width="1.5" />
-                            </g>
-                            <!-- 손바닥 패드 / 음영 -->
-                            <ellipse cx="100" cy="135" rx="25" ry="15" fill="#3f3f46" opacity="0.6" />
-                            <ellipse cx="75" cy="118" rx="8" ry="12" fill="#3f3f46" opacity="0.5" transform="rotate(-20 75 118)"/>
-                            <ellipse cx="98" cy="108" rx="8" ry="12" fill="#3f3f46" opacity="0.5" />
-                            <ellipse cx="122" cy="115" rx="8" ry="12" fill="#3f3f46" opacity="0.5" transform="rotate(20 122 115)"/>
+                            <g><path d="M 32 105 Q 20 90 15 75 Q 25 82 36 92 Z" fill="url(#lClawGrad)" /><path d="M 62 135 Q 40 125 32 105 C 30 95 40 90 48 100 Q 58 115 70 125 Z" fill="url(#lFingerGrad)" stroke="#18181b" stroke-width="1.5" /></g>
+                            <g><path d="M 58 45 Q 52 22 45 5 Q 56 18 64 35 Z" fill="url(#lClawGrad)" /><path d="M 75 105 Q 65 70 58 45 C 56 35 68 32 72 42 Q 80 70 85 102 Z" fill="url(#lFingerGrad)" stroke="#18181b" stroke-width="1.5" /></g>
+                            <g><path d="M 98 35 Q 98 10 95 -8 Q 104 8 104 28 Z" fill="url(#lClawGrad)" /><path d="M 90 98 Q 92 60 98 35 C 98 24 108 24 108 35 Q 106 60 102 98 Z" fill="url(#lFingerGrad)" stroke="#18181b" stroke-width="1.5" /></g>
+                            <g><path d="M 136 48 Q 145 25 152 8 Q 143 22 132 38 Z" fill="url(#lClawGrad)" /><path d="M 110 102 Q 120 70 136 48 C 140 38 150 42 144 52 Q 130 75 120 105 Z" fill="url(#lFingerGrad)" stroke="#18181b" stroke-width="1.5" /></g>
+                            <g><path d="M 162 110 Q 178 96 188 82 Q 175 90 160 100 Z" fill="url(#lClawGrad)" /><path d="M 125 128 Q 148 118 162 110 C 170 102 178 112 168 120 Q 150 132 132 138 Z" fill="url(#lFingerGrad)" stroke="#18181b" stroke-width="1.5" /></g>
                         </g>
                     </svg>
                 </div>
 
-                <!-- 🐾 오른쪽 리얼 라쿤 손 -->
                 <div id="paw-right" class="raccoon-paw paw-right">
                     <svg viewBox="0 0 200 260" width="100%" height="100%">
                         <defs>
@@ -515,54 +534,21 @@
                             <path d="M 40 260 L 45 180 Q 50 150 70 140 Q 130 140 155 180 L 160 260 Z" fill="url(#rArmFur)" />
                             <path d="M 38 220 Q 25 210 35 195 Q 20 185 40 175 Q 30 160 50 155 Q 55 140 70 140 Q 90 135 110 140 Q 130 135 145 150 Q 165 155 155 175 Q 175 185 160 200 L 160 260 L 40 260 Z" fill="#292524" />
                             <path d="M 60 150 C 50 120 60 90 80 90 C 100 90 110 90 130 90 C 150 90 160 120 150 150 C 140 170 70 170 60 150 Z" fill="url(#rFingerGrad)" />
-
-                            <g>
-                                <path d="M 32 105 Q 20 90 15 75 Q 25 82 36 92 Z" fill="url(#rClawGrad)" />
-                                <path d="M 62 135 Q 40 125 32 105 C 30 95 40 90 48 100 Q 58 115 70 125 Z" fill="url(#rFingerGrad)" stroke="#18181b" stroke-width="1.5" />
-                            </g>
-                            <g>
-                                <path d="M 58 45 Q 52 22 45 5 Q 56 18 64 35 Z" fill="url(#rClawGrad)" />
-                                <path d="M 75 105 Q 65 70 58 45 C 56 35 68 32 72 42 Q 80 70 85 102 Z" fill="url(#rFingerGrad)" stroke="#18181b" stroke-width="1.5" />
-                                <path d="M 64 68 Q 70 71 76 69" stroke="#52525b" stroke-width="1.5" fill="none" />
-                                <path d="M 68 88 Q 74 91 80 89" stroke="#52525b" stroke-width="1.5" fill="none" />
-                            </g>
-                            <g>
-                                <path d="M 98 35 Q 98 10 95 -8 Q 104 8 104 28 Z" fill="url(#rClawGrad)" />
-                                <path d="M 90 98 Q 92 60 98 35 C 98 24 108 24 108 35 Q 106 60 102 98 Z" fill="url(#rFingerGrad)" stroke="#18181b" stroke-width="1.5" />
-                                <path d="M 94 58 Q 100 60 105 58" stroke="#52525b" stroke-width="1.5" fill="none" />
-                                <path d="M 92 80 Q 98 82 104 80" stroke="#52525b" stroke-width="1.5" fill="none" />
-                            </g>
-                            <g>
-                                <path d="M 136 48 Q 145 25 152 8 Q 143 22 132 38 Z" fill="url(#rClawGrad)" />
-                                <path d="M 110 102 Q 120 70 136 48 C 140 38 150 42 144 52 Q 130 75 120 105 Z" fill="url(#rFingerGrad)" stroke="#18181b" stroke-width="1.5" />
-                                <path d="M 122 70 Q 128 72 134 69" stroke="#52525b" stroke-width="1.5" fill="none" />
-                                <path d="M 116 89 Q 122 91 128 88" stroke="#52525b" stroke-width="1.5" fill="none" />
-                            </g>
-                            <g>
-                                <path d="M 162 110 Q 178 96 188 82 Q 175 90 160 100 Z" fill="url(#rClawGrad)" />
-                                <path d="M 125 128 Q 148 118 162 110 C 170 102 178 112 168 120 Q 150 132 132 138 Z" fill="url(#rFingerGrad)" stroke="#18181b" stroke-width="1.5" />
-                            </g>
-                            <ellipse cx="100" cy="135" rx="25" ry="15" fill="#3f3f46" opacity="0.6" />
-                            <ellipse cx="75" cy="118" rx="8" ry="12" fill="#3f3f46" opacity="0.5" transform="rotate(-20 75 118)"/>
-                            <ellipse cx="98" cy="108" rx="8" ry="12" fill="#3f3f46" opacity="0.5" />
-                            <ellipse cx="122" cy="115" rx="8" ry="12" fill="#3f3f46" opacity="0.5" transform="rotate(20 122 115)"/>
+                            <g><path d="M 32 105 Q 20 90 15 75 Q 25 82 36 92 Z" fill="url(#rClawGrad)" /><path d="M 62 135 Q 40 125 32 105 C 30 95 40 90 48 100 Q 58 115 70 125 Z" fill="url(#rFingerGrad)" stroke="#18181b" stroke-width="1.5" /></g>
+                            <g><path d="M 58 45 Q 52 22 45 5 Q 56 18 64 35 Z" fill="url(#rClawGrad)" /><path d="M 75 105 Q 65 70 58 45 C 56 35 68 32 72 42 Q 80 70 85 102 Z" fill="url(#rFingerGrad)" stroke="#18181b" stroke-width="1.5" /></g>
+                            <g><path d="M 98 35 Q 98 10 95 -8 Q 104 8 104 28 Z" fill="url(#rClawGrad)" /><path d="M 90 98 Q 92 60 98 35 C 98 24 108 24 108 35 Q 106 60 102 98 Z" fill="url(#rFingerGrad)" stroke="#18181b" stroke-width="1.5" /></g>
+                            <g><path d="M 136 48 Q 145 25 152 8 Q 143 22 132 38 Z" fill="url(#rClawGrad)" /><path d="M 110 102 Q 120 70 136 48 C 140 38 150 42 144 52 Q 130 75 120 105 Z" fill="url(#rFingerGrad)" stroke="#18181b" stroke-width="1.5" /></g>
+                            <g><path d="M 162 110 Q 178 96 188 82 Q 175 90 160 100 Z" fill="url(#rClawGrad)" /><path d="M 125 128 Q 148 118 162 110 C 170 102 178 112 168 120 Q 150 132 132 138 Z" fill="url(#rFingerGrad)" stroke="#18181b" stroke-width="1.5" /></g>
                         </g>
                     </svg>
                 </div>
 
                 <div id="touch-area" class="game-card" onmousedown="handleMouseDown(event)" onmouseup="handleMouseUp(event)">
                     <p id="item-title" style="font-size: 18px; font-weight: bold;">준비되셨나요?</p>
-                    
                     <div id="item-graphic" style="margin: 10px 0; height: 90px; display: flex; justify-content: center; align-items: center;"></div>
-                    
-                    <!-- 4번 클릭 상태 표시 인디케이터 -->
                     <div id="eat-dots" class="eat-dots">
-                        <div class="eat-dot"></div>
-                        <div class="eat-dot"></div>
-                        <div class="eat-dot"></div>
-                        <div class="eat-dot"></div>
+                        <div class="eat-dot"></div><div class="eat-dot"></div><div class="eat-dot"></div><div class="eat-dot"></div>
                     </div>
-
                     <p id="item-guide" style="color: #8d6e63; margin-top: 8px;">연속 4번 터치해서 먹으세요!</p>
                 </div>
             </div>
@@ -581,9 +567,7 @@
                 <h1>📖 수집 도감</h1>
                 <p>수집 달성도: <b id="book-count">0 / 14</b></p>
             </div>
-
             <div id="book-grid" class="book-grid"></div>
-
             <div class="btn-group">
                 <button onclick="showScreen('main-screen')">메인 화면으로 돌아가기</button>
             </div>
@@ -602,6 +586,25 @@
         let activeHand = 0;
         
         const unlockedItems = new Set();
+
+        /* 🖼️ 요청하신 데이터 원본 반영 */
+        const endingData = {
+            ending1: {
+                title: "😭 엔딩 1: 폭발",
+                image: "ending1.jpg",
+                desc: "지구를 지키지 못했습니다."
+            },
+            ending2: {
+                title: "😋 엔딩 2: 최고!",
+                image: "ending2.jpg",
+                desc: "라쿤 덕분에 지구가 무사합니다. 고마워요 라쿤맨이야!"
+            },
+            ending3: {
+                title: "👑 엔딩 3: 돼지괴물라쿤",
+                image: "ending3.jpg",
+                desc: "라쿤이 지구까지 먹어버렸습니다."
+            }
+        };
 
         const svgData = {
             apple: `<svg viewBox="0 0 100 100" width="75" height="75"><circle cx="42" cy="55" r="28" fill="#e53935" /><circle cx="58" cy="55" r="28" fill="#e53935" /><path d="M 30 73 Q 50 88 70 73 Z" fill="#e53935" /><path d="M 50 30 Q 55 15 60 10" stroke="#6d4c41" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M 50 22 Q 30 15 35 30 Z" fill="#4caf50" /><circle cx="35" cy="45" r="4" fill="#ffffff" opacity="0.5" /></svg>`,
@@ -638,6 +641,24 @@
             { id: "cheese", name: "치즈", emoji: "🧀", svg: svgData.cheese }
         ];
 
+        /* 🤫 비밀 E 키 입력 감지 (특수 히든키) */
+        window.addEventListener('keydown', (event) => {
+            if (event.key === 'e' || event.key === 'E' || event.key === 'ㄷ') {
+                document.getElementById('secret-modal').classList.remove('hidden');
+            }
+        });
+
+        function closeSecretModal() {
+            document.getElementById('secret-modal').classList.add('hidden');
+        }
+
+        /* 히든 창에서 A, B, C 선택 시 바로 엔딩으로 직행 */
+        function triggerSecretEnding(endingKey) {
+            stopGame();
+            closeSecretModal();
+            showGameOver(endingKey);
+        }
+
         function showScreen(screenId) {
             document.getElementById('main-screen').classList.add('hidden');
             document.getElementById('info-screen').classList.add('hidden');
@@ -647,7 +668,6 @@
             if (screenId === 'book-screen') {
                 updateBookDisplay();
             }
-            
             document.getElementById(screenId).classList.remove('hidden');
         }
 
@@ -694,8 +714,25 @@
             if (timerId) clearInterval(timerId);
         }
 
-        function showGameOver() {
+        /* 🏆 엔딩 화면 출력 함수 (점수 계산 또는 치트키 강제 선택) */
+        function showGameOver(forcedEndingKey = null) {
+            let currentEnding;
+
+            if (forcedEndingKey) {
+                currentEnding = endingData[forcedEndingKey];
+            } else if (score >= 500) {
+                currentEnding = endingData.ending3;
+            } else if (score >= 300) {
+                currentEnding = endingData.ending2;
+            } else {
+                currentEnding = endingData.ending1;
+            }
+
+            document.getElementById("ending-title").innerText = currentEnding.title;
+            document.getElementById("ending-img").src = currentEnding.image;
+            document.getElementById("ending-desc").innerText = currentEnding.desc;
             document.getElementById("final-score").innerText = `${score}점`;
+
             document.getElementById("gameover-overlay").classList.remove("hidden");
         }
 
@@ -764,7 +801,6 @@
             }, 400);
         }
 
-        // 🐾 라쿤 손 가위바위보/낚아채기 및 음식 흔들림 모션
         function triggerRaccoonHandAnimation() {
             const pawLeft = document.getElementById("paw-left");
             const pawRight = document.getElementById("paw-right");
