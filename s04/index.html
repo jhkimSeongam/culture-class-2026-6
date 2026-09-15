@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>오늘의 복습</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <header class="top">
+        <div>
+            <span class="small-title">STUDY NOTE</span>
+            <h1>오늘의 복습</h1>
+            <p>오늘 배운 내용을 간단하게 정리해보세요.</p>
+        </div>
+    </header>
+
+
+    <main>
+
+        <!-- 복습 입력 -->
+        <section class="review-box">
+
+            <div class="box-title">
+
+                <span class="icon">✏️</span>
+
+                <div>
+                    <h2>복습 기록하기</h2>
+                    <p>오늘 배운 내용을 작성해주세요.</p>
+                </div>
+
+            </div>
+
+
+            <textarea
+                id="reviewInput"
+                placeholder="예) 오늘 수학 시간에 이차방정식을 배웠다."
+            ></textarea>
+
+
+            <!-- 자동 과목 분류 -->
+            <div id="subjectResult" class="subject-result hidden">
+
+                <span>자동 분류</span>
+
+                <strong id="detectedSubject">
+                    기타
+                </strong>
+
+            </div>
+
+
+            <button id="saveBtn" class="save-button">
+                복습 저장하기
+            </button>
+
+        </section>
+
+
+        <!-- 저장된 복습 -->
+        <section id="reviewSection" class="review-section hidden">
+
+            <div class="section-title">
+
+                <h2>저장된 복습</h2>
+
+                <button id="allBtn">
+                    전체보기
+                </button>
+
+            </div>
+
+
+            <!-- 과목 필터 -->
+            <div class="filter-buttons">
+
+                <button class="filter-btn active" data-subject="전체">
+                    전체
+                </button>
+
+                <button class="filter-btn" data-subject="국어">
+                    국어
+                </button>
+
+                <button class="filter-btn" data-subject="수학">
+                    수학
+                </button>
+
+                <button class="filter-btn" data-subject="영어">
+                    영어
+                </button>
+
+                <button class="filter-btn" data-subject="과학">
+                    과학
+                </button>
+
+                <button class="filter-btn" data-subject="사회">
+                    사회
+                </button>
+
+                <button class="filter-btn" data-subject="역사">
+                    역사
+                </button>
+
+                <button class="filter-btn" data-subject="미술">
+                    미술
+                </button>
+
+                <button class="filter-btn" data-subject="음악">
+                    음악
+                </button>
+
+                <button class="filter-btn" data-subject="체육">
+                    체육
+                </button>
+
+                <button class="filter-btn" data-subject="기타">
+                    기타
+                </button>
+
+            </div>
+
+
+            <div id="reviewList" class="review-list"></div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>

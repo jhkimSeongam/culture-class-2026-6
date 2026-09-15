@@ -4,201 +4,405 @@
 
 body {
     margin: 0;
-    background-color: white;
-    font-family: Arial, "Noto Sans KR", sans-serif;
-    color: #111;
+    font-family: "Pretendard", "Noto Sans KR", sans-serif;
+    background: #f4f7fb;
+    color: #1d2739;
 }
 
-/* 전체 화면 */
+button,
+textarea {
+    font-family: inherit;
+}
+
 .container {
-    width: 420px;
-    max-width: 92%;
-    margin: 25px auto;
-    padding: 15px;
-    border: 1.5px solid #888;
-    border-radius: 45px;
-    background-color: white;
+    width: 90%;
+    max-width: 900px;
+    margin: 50px auto;
 }
 
 
-/* -----------------
-   제목
------------------ */
+/* =========================
+   상단
+========================= */
 
 .top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    padding: 5px 0 15px 0;
+    margin-bottom: 35px;
 }
 
-h1 {
-    margin: 0;
+.small-title {
+    color: #5276b9;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.top h1 {
+    margin: 7px 0;
     font-size: 34px;
-    font-weight: 900;
-    letter-spacing: -2px;
 }
 
 .top p {
-    margin: 4px 0 0;
-    font-size: 19px;
-    font-weight: bold;
-    letter-spacing: -1px;
-}
-
-#allBtn {
-    border: none;
-    background: none;
-    color: #888;
-    font-size: 23px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-#allBtn:hover {
-    color: #555;
+    margin: 0;
+    color: #7b8799;
 }
 
 
-/* -----------------
-   복습 입력창
------------------ */
+/* =========================
+   입력 카드
+========================= */
 
 .review-box {
-    border: 1.5px solid #888;
-    border-radius: 35px;
-    padding: 18px 8px 12px;
+    background: white;
+    border-radius: 22px;
+    padding: 30px;
+    box-shadow: 0 8px 30px rgba(50, 70, 100, 0.08);
 }
 
-.review-box h2 {
-    margin: 0 10px 8px;
+.box-title {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 22px;
+}
+
+.icon {
+    width: 45px;
+    height: 45px;
+
+    border-radius: 13px;
+
+    background: #edf4ff;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
     font-size: 21px;
 }
 
+.box-title h2 {
+    margin: 0 0 4px;
+    font-size: 20px;
+}
+
+.box-title p {
+    margin: 0;
+    color: #8a95a6;
+    font-size: 14px;
+}
+
+
+/* =========================
+   입력창
+========================= */
 
 textarea {
     width: 100%;
-    height: 220px;
+    height: 180px;
 
-    border: 1.5px solid #888;
-    border-radius: 27px;
+    resize: vertical;
 
-    padding: 15px;
+    border: 1px solid #dce3ed;
+    border-radius: 15px;
 
-    resize: none;
+    padding: 18px;
 
-    font-family: inherit;
-    font-size: 16px;
+    font-size: 15px;
 
     outline: none;
+
+    color: #263449;
+    background: #fafbfd;
 }
 
 textarea:focus {
-    border-color: #555;
+    border-color: #6d91c8;
+
+    background: white;
+
+    box-shadow:
+        0 0 0 3px rgba(109, 145, 200, 0.1);
+}
+
+textarea::placeholder {
+    color: #aeb7c5;
 }
 
 
-/* -----------------
+/* =========================
+   자동 과목
+========================= */
+
+.subject-result {
+    margin-top: 14px;
+
+    padding: 12px 15px;
+
+    border-radius: 12px;
+
+    background: #f2f6fc;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    font-size: 14px;
+}
+
+.subject-result span {
+    color: #7c899c;
+}
+
+.subject-result strong {
+    color: #426ba8;
+}
+
+
+/* =========================
    저장 버튼
------------------ */
+========================= */
 
 .save-button {
     width: 100%;
-    height: 50px;
 
-    margin-top: 12px;
+    border: none;
 
-    border: 1px solid #777;
-    border-radius: 30px;
+    margin-top: 18px;
 
-    background-color: #8582ee;
+    padding: 15px;
+
+    border-radius: 13px;
+
+    background: #5276b9;
     color: white;
 
-    font-size: 17px;
-    font-weight: bold;
+    font-size: 16px;
+    font-weight: 700;
 
     cursor: pointer;
 
-    transition: 0.15s;
+    transition: 0.2s;
 }
 
 .save-button:hover {
-    opacity: 0.85;
+    background: #41659f;
+
+    transform: translateY(-1px);
 }
 
-.save-button:active {
-    transform: scale(0.97);
+
+/* =========================
+   저장된 복습
+========================= */
+
+.review-section {
+    margin-top: 30px;
+}
+
+.section-title {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+}
+
+.section-title h2 {
+    font-size: 21px;
+}
+
+.section-title button {
+    border: none;
+
+    background: none;
+
+    color: #5276b9;
+
+    cursor: pointer;
+
+    font-weight: 600;
 }
 
 
-/* -----------------
-   복습 목록
------------------ */
+/* =========================
+   과목 필터
+========================= */
+
+.filter-buttons {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 8px;
+
+    margin: 15px 0;
+}
+
+.filter-btn {
+    border: 1px solid #dce3ed;
+
+    background: white;
+
+    color: #6e7b8f;
+
+    padding: 8px 13px;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    font-size: 13px;
+}
+
+.filter-btn:hover {
+    background: #f1f5fb;
+}
+
+.filter-btn.active {
+    background: #5276b9;
+
+    color: white;
+
+    border-color: #5276b9;
+}
+
+
+/* =========================
+   복습 카드
+========================= */
 
 .review-list {
-    margin-top: 15px;
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 14px;
 }
 
-.review-item {
-    border: 1px solid #aaa;
-    border-radius: 22px;
+.review-card {
+    background: white;
 
-    padding: 15px;
-    margin-bottom: 10px;
+    padding: 20px;
 
-    background-color: #fafafa;
+    border-radius: 16px;
+
+    box-shadow:
+        0 5px 20px rgba(50, 70, 100, 0.06);
+}
+
+.review-top {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 12px;
+}
+
+.subject-tag {
+    display: inline-block;
+
+    padding: 5px 10px;
+
+    background: #edf4ff;
+
+    color: #5276b9;
+
+    border-radius: 8px;
+
+    font-size: 12px;
+
+    font-weight: 700;
 }
 
 .review-date {
+    color: #9ba5b4;
+
     font-size: 12px;
-    color: #888;
-    margin-bottom: 8px;
 }
 
 .review-content {
+    line-height: 1.7;
+
     white-space: pre-wrap;
-    line-height: 1.5;
-    font-size: 15px;
+
+    color: #384559;
 }
 
 .delete-button {
-    margin-top: 10px;
-
     border: none;
-    background: none;
 
-    color: #999;
+    background: #f6f7f9;
+
+    color: #8c96a4;
+
+    padding: 6px 10px;
+
+    border-radius: 7px;
+
     cursor: pointer;
+
+    margin-top: 12px;
 }
 
 .delete-button:hover {
-    color: #555;
+    background: #eef0f3;
 }
 
 
-/* 목록이 숨겨진 상태 */
+/* =========================
+   복습 없음
+========================= */
+
+.empty {
+    background: white;
+
+    border-radius: 16px;
+
+    padding: 30px;
+
+    text-align: center;
+
+    color: #8c97a6;
+}
+
+
+/* 숨김 */
+
 .hidden {
     display: none;
 }
 
 
-/* 모바일 */
-@media (max-width: 500px) {
+/* =========================
+   모바일
+========================= */
+
+@media (max-width: 600px) {
 
     .container {
-        margin-top: 15px;
+        width: 92%;
+
+        margin: 30px auto;
     }
 
-    h1 {
-        font-size: 29px;
+    .top h1 {
+        font-size: 28px;
     }
 
-    .top p {
-        font-size: 16px;
+    .review-box {
+        padding: 20px;
     }
 
-    #allBtn {
-        font-size: 19px;
+    textarea {
+        height: 160px;
     }
 
+    .filter-buttons {
+        gap: 6px;
+    }
+
+    .filter-btn {
+        padding: 7px 10px;
+    }
 }
